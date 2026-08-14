@@ -7,10 +7,12 @@
 #include "SDL3/SDL_render.h"
 #include "SDL3/SDL_stdinc.h"
 #include "SDL3/SDL_video.h"
-#include "sprites.hpp"
 #include "utility.h"
 
 #include "objects/ball.hpp"
+
+#include <cmath>
+#include <numbers>
 
 int main()
 {
@@ -31,9 +33,10 @@ int main()
     // surface in the window
     SDL_Renderer *sdl_renderer{nullptr};
     // character sprite
-    Sprites<Direction> ball_sprite({Direction::LEFT, Direction::UP, Direction::DOWN, Direction::RIGHT},
-                                   SDL_Color{.r = 0, .g = 180, .b = 180, .a = 0});
-    ball_sprite.sliceTextureBox(32.0F, 32.0F, {.rows = 2, .cols = 2});
+    Ball<Direction> ball({.x = k_screen_width, .y = k_screen_height},
+                         {Direction::LEFT, Direction::UP, Direction::DOWN, Direction::RIGHT},
+                         SDL_Color{.r = 0, .g = 180, .b = 180, .a = 0});
+    ball.setupSprite(32.0F, 32.0F, {.rows = 2, .cols = 2}, Direction::UP);
 
     Texture arrow_texture{};
 
@@ -43,7 +46,7 @@ int main()
         return 1;
     }
 
-    if (!loadMedia(ball_sprite.getTexture(), sdl_renderer, "balls.png")) {
+    if (!loadMedia(ball.getTexture(), sdl_renderer, "balls.png")) {
         SDL_Log("failed to load media\n");
         return 2;
     }
@@ -56,11 +59,6 @@ int main()
     bool quit{false};
     SDL_Event event;
     SDL_zero(event);
-
-    BallState ball_state(k_screen_width, k_screen_height);
-
-    ball_sprite.setActiveDir(Direction::UP);
-    ball_state.makeCenter();
 
     // default background to white
     SDL_Color bg_color{.r = 0xFF, .g = 0xFF, .b = 0xFF, .a = 0xFF};
@@ -77,16 +75,16 @@ int main()
             } else if (event.type == SDL_EVENT_KEY_DOWN) {
                 switch (event.key.key) {
                 case SDLK_UP:
-                    ball_sprite.setActiveDir(Direction::UP);
+                    ball.setDirection(Direction::UP);
                     break;
                 case SDLK_DOWN:
-                    ball_sprite.setActiveDir(Direction::DOWN);
+                    ball.setDirection(Direction::DOWN);
                     break;
                 case SDLK_LEFT:
-                    ball_sprite.setActiveDir(Direction::LEFT);
+                    ball.setDirection(Direction::LEFT);
                     break;
                 case SDLK_RIGHT:
-                    ball_sprite.setActiveDir(Direction::RIGHT);
+                    ball.setDirection(Direction::RIGHT);
                     break;
                 default:
                     break;
@@ -104,40 +102,47 @@ int main()
             bg_color.r = 0xFF;
             bg_color.g = 0x00;
             bg_color.b = 0x00;
-            ball_state.tryUp(dt_c);
+            ball.tryUp(dt_c);
         }
         if (key_states[SDL_SCANCODE_DOWN]) {
             bg_color.r = 0x00;
             bg_color.g = 0xFF;
             bg_color.b = 0x00;
-            ball_state.tryDown(dt_c);
+            ball.tryDown(dt_c);
         }
         if (key_states[SDL_SCANCODE_LEFT]) {
             bg_color.r = 0xFF;
             bg_color.g = 0xFF;
             bg_color.b = 0x00;
-            ball_state.tryLeft(dt_c);
+            ball.tryLeft(dt_c);
         }
         if (key_states[SDL_SCANCODE_RIGHT]) {
             bg_color.r = 0x00;
             bg_color.g = 0x00;
             bg_color.b = 0xFF;
-            ball_state.tryRight(dt_c);
+            ball.tryRight(dt_c);
         }
-        ball_state.update(dt_c);
+        ball.update(dt_c);
         // set background to white
         SDL_SetRenderDrawColor(sdl_renderer, bg_color.r, bg_color.g, bg_color.b, 0xFF);
         SDL_RenderClear(sdl_renderer);
         // render image to screen
-        ball_sprite.renderActive(sdl_renderer, ball_state.getPosition());
+        ball.render(sdl_renderer);
 
-        arrow_texture.render({.x = 0, .y = static_cast<float>((k_screen_height - arrow_texture.getHeight()))},
-                             sdl_renderer, nullptr, nullptr);
+        const SDL_FPoint arrow_pos{.x = 0.0F, .y = static_cast<float>(k_screen_height - arrow_texture.getHeight())};
+        const SDL_FPoint arrow_center{.x = arrow_pos.x + (static_cast<float>(arrow_texture.getWidth()) / 2.0F),
+                                      .y = arrow_pos.y + (static_cast<float>(arrow_texture.getHeight()) / 2.0F)};
+        const SDL_FPoint ball_pos = ball.getPosition();
+        const float dxx = ball_pos.x - arrow_center.x;
+        const float dyy = ball_pos.y - arrow_center.y;
+        const double degrees = std::atan2(dxx, -dyy) * (180.0 / std::numbers::pi);
+
+        arrow_texture.renderWithTransform(arrow_pos, sdl_renderer, nullptr, nullptr, degrees, nullptr, SDL_FLIP_NONE);
 
         // update screen
         SDL_RenderPresent(sdl_renderer);
     }
 
-    close(&sdl_window, ball_sprite.getTexture(), &sdl_renderer);
+    close(&sdl_window, ball.getTexture(), &sdl_renderer);
     return 0;
 }
