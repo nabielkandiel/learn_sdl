@@ -23,10 +23,10 @@ class Texture
 
     bool loadFromFile(const std::string &path, SDL_Renderer *sdl_renderer);
     void destory();
-    void render(SDL_FPoint dst_cords, SDL_Renderer *sdl_renderer, SDL_FPoint *dst_dims, SDL_FRect *src_rect);
-    void renderWithTransform(SDL_FPoint dst_cords, SDL_Renderer *sdl_renderer, SDL_FPoint *dst_dims,
-                             const SDL_FRect *src_rect, double degrees, SDL_FPoint *center,
-                             SDL_FlipMode = SDL_FLIP_NONE);
+    void render(SDL_FPoint dst_cords, SDL_Renderer *sdl_renderer, const SDL_FRect *src_rect,
+                const SDL_FPoint *dst_dims);
+    void renderWithTransform(SDL_FPoint dst_cords, SDL_Renderer *sdl_renderer, const SDL_FRect *src_rect,
+                             const SDL_FPoint *dst_dims, double degrees, SDL_FPoint *center, SDL_FlipMode flip_mode);
 
     [[nodiscard]] int getWidth() const
     {

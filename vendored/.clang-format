@@ -1,0 +1,4 @@
+---
+# We disable formatting entirely for this folder and all subfolders
+DisableFormat: true
+SortIncludes: Never

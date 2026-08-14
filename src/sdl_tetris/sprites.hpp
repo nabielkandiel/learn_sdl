@@ -18,8 +18,8 @@ template <typename DirType> class Sprites
 
   public:
     // passed is (index in png -> direction it represents)
-    Sprites(std::array<DirType, TOTAL_DIRS> dir_map, SDL_Color key) : dir_map(dir_map), texture(key) {}
-    Sprites(std::array<DirType, TOTAL_DIRS> dir_map) : dir_map(dir_map), texture(std::nullopt) {}
+    Sprites(std::array<DirType, TOTAL_DIRS> dir_map, SDL_Color key) : texture(key), dir_map(dir_map) {}
+    Sprites(std::array<DirType, TOTAL_DIRS> dir_map) : texture(std::nullopt), dir_map(dir_map) {}
     ~Sprites() = default;
     // dont allow this struct to be copied or moved
     Sprites(const Sprites &) = delete;            // Copy Constructor
@@ -58,21 +58,21 @@ template <typename DirType> class Sprites
         }
     }
 
-    void renderActive(SDL_Renderer *sdl_renderer, std::same_as<float> auto center_x, std::same_as<float> auto center_y)
+    void renderActive(SDL_Renderer *sdl_renderer, SDL_FPoint center)
     {
         const auto src_rect = getActiveRect();
-        float render_x = center_x - (src_rect.w / 2.F);
-        float render_y = center_y - (src_rect.h / 2.F);
-        texture.render(render_x, render_y, sdl_renderer, &src_rect);
+        const SDL_FPoint dst = {.x = (center.x - (src_rect.w / 2.F)), .y = (center.y - (src_rect.h / 2.F))};
+
+        texture.render(dst, sdl_renderer, &src_rect, nullptr);
     }
 
-    void renderActiveWithTransform(SDL_FPoint dst_cords, SDL_Renderer *sdl_renderer, SDL_FPoint *dst_dims,
-                                   double degrees, SDL_FPoint *center, SDL_FlipMode flip_mode = SDL_FLIP_NONE)
+    void renderActiveWithTransform(SDL_Renderer *sdl_renderer, float center_x, float center_y, SDL_FPoint *center,
+                                   SDL_FlipMode flip_mode, double degrees)
     {
         const auto src_rect = getActiveRect();
-        float render_x = dst_cords.x - (src_rect.w / 2.F);
-        float render_y = dst_cords.y - (src_rect.h / 2.F);
-        texture.render(render_x, render_y, sdl_renderer, &src_rect);
+        const SDL_FPoint dst = {.x = (center_x - (src_rect.w / 2.F)), .y = (center_y - (src_rect.h / 2.F))};
+
+        texture.renderWithTransform(dst, sdl_renderer, &src_rect, nullptr, degrees, center, flip_mode);
     }
 
     [[nodiscard]] const SDL_FRect &getActiveRect() const

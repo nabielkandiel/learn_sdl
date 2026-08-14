@@ -9,7 +9,7 @@ Texture::Texture() : Texture(std::nullopt) {}
 
 Texture::Texture(SDL_Color key) : Texture{std::optional<SDL_Color>{key}} {}
 
-Texture::Texture(std::optional<SDL_Color> key) : color_key{key}, sdl_texture{nullptr}, m_width{0}, m_height{0} {}
+Texture::Texture(std::optional<SDL_Color> key) : sdl_texture{nullptr}, color_key{key}, m_width{0}, m_height{0} {}
 
 Texture::~Texture()
 {
@@ -55,7 +55,8 @@ void Texture::destory()
     m_width = 0;
 }
 
-void Texture::render(SDL_FPoint dst_cords, SDL_Renderer *sdl_renderer, SDL_FPoint *dst_dims, SDL_FRect *src_rect)
+void Texture::render(SDL_FPoint dst_cords, SDL_Renderer *sdl_renderer, const SDL_FRect *src_rect,
+                     const SDL_FPoint *dst_dims)
 {
     auto dst_w = static_cast<float>(m_width);
     auto dst_h = static_cast<float>(m_height);
@@ -70,8 +71,9 @@ void Texture::render(SDL_FPoint dst_cords, SDL_Renderer *sdl_renderer, SDL_FPoin
     SDL_RenderTexture(sdl_renderer, sdl_texture, src_rect, &dst_rect);
 }
 
-void Texture::renderWithTransform(SDL_FPoint dst_cords, SDL_Renderer *sdl_renderer, SDL_FPoint *dst_dims,
-                                  const SDL_FRect *src_rect, double degrees, SDL_FPoint *center, SDL_FlipMode flip_mode)
+void Texture::renderWithTransform(SDL_FPoint dst_cords, SDL_Renderer *sdl_renderer, const SDL_FRect *src_rect,
+                                  const SDL_FPoint *dst_dims, double degrees, SDL_FPoint *center,
+                                  SDL_FlipMode flip_mode)
 {
     auto dst_w = static_cast<float>(m_width);
     auto dst_h = static_cast<float>(m_height);

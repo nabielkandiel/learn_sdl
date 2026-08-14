@@ -1,5 +1,5 @@
 ---
-# Clang-Tidy configuration for Vulkan Development
+# Clang-Tidy configuration for SDL3 Development
 Checks: >
   -*,
   bugprone-*,

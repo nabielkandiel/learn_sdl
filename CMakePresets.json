@@ -1,0 +1,27 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "clang-debug-linux",
+            "displayName": "clang debug linux",
+            "description": "clang debug linux with clang format",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_CXX_CLANG_TIDY": "clang-tidy;-p=${sourceDir}/build/${presetName};--header-filter=^(?!.*external/).*$"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "build-clang-debug",
+            "displayName": "Build w Clang using 8 Cores",
+            "configurePreset": "clang-debug-linux",
+            "jobs": 8
+        }
+    ]
+}
