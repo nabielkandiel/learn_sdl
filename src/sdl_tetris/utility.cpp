@@ -19,11 +19,17 @@ bool init(SDL_Window **window_pp, SDL_Renderer **renderer_pp, int width, int hei
         SDL_Log("Create Window and Renderer failed - SDL error: %s\n", SDL_GetError());
         return false;
     }
+
+    if (!TTF_Init()) {
+        SDL_Log("TTF Init failed - SDL error: %s\n", SDL_GetError());
+        return false;
+    }
+
     return true;
 }
 
 // loads media
-bool loadMedia(Texture &sdl_texture, SDL_Renderer *sdl_renderer, std::string_view fname)
+bool loadAsset(Texture &sdl_texture, SDL_Renderer *sdl_renderer, std::string_view fname)
 {
     std::string image_path{ASSET_PATH};
     image_path += fname;
@@ -36,12 +42,12 @@ bool loadMedia(Texture &sdl_texture, SDL_Renderer *sdl_renderer, std::string_vie
 
 // frees media and shuts down SDL
 
-void close(SDL_Window **window_pp, Texture &sdl_texture, SDL_Renderer **renderer_pp)
+void close(SDL_Window **window_pp, SDL_Renderer **renderer_pp)
 {
-    sdl_texture.destory();
     SDL_DestroyWindow(*window_pp);
     *window_pp = nullptr;
     SDL_DestroyRenderer(*renderer_pp);
     *renderer_pp = nullptr;
+    TTF_Quit();
     SDL_Quit();
 }

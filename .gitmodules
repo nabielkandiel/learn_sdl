@@ -4,3 +4,6 @@
 [submodule "vendored/SDL3_Image"]
 	path = vendored/SDL3_Image
 	url = git@github.com:libsdl-org/SDL_image
+[submodule "vendored/SDL_ttf"]
+	path = vendored/SDL_ttf
+	url = https://github.com/libsdl-org/SDL_ttf.git

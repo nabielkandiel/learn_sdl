@@ -10,6 +10,7 @@
 #include "utility.h"
 
 #include "objects/ball.hpp"
+#include "text.hpp"
 
 #include <cmath>
 #include <numbers>
@@ -32,6 +33,12 @@ int main()
     SDL_Window *sdl_window{nullptr};
     // surface in the window
     SDL_Renderer *sdl_renderer{nullptr};
+    SDL_Log("Starting with dimension %u x %u\n", k_screen_width, k_screen_height);
+    if (!init(&sdl_window, &sdl_renderer, k_screen_width, k_screen_height)) {
+        SDL_Log("failed to init SDL\n");
+        return 1;
+    }
+
     // character sprite
     Ball<Direction> ball({.x = k_screen_width, .y = k_screen_height},
                          {Direction::LEFT, Direction::UP, Direction::DOWN, Direction::RIGHT},
@@ -39,19 +46,15 @@ int main()
     ball.setupSprite(32.0F, 32.0F, {.rows = 2, .cols = 2}, Direction::UP);
 
     Texture arrow_texture{};
+    Text text("Montserrat/Montserrat-VariableFont_wght.ttf", 60);
+    text.loadText("Hello World", sdl_renderer);
 
-    SDL_Log("Starting with dimension %u x %u\n", k_screen_width, k_screen_height);
-    if (!init(&sdl_window, &sdl_renderer, k_screen_width, k_screen_height)) {
-        SDL_Log("failed to init SDL\n");
-        return 1;
-    }
-
-    if (!loadMedia(ball.getTexture(), sdl_renderer, "balls.png")) {
+    if (!loadAsset(ball.getTexture(), sdl_renderer, "balls.png")) {
         SDL_Log("failed to load media\n");
         return 2;
     }
 
-    if (!loadMedia(arrow_texture, sdl_renderer, "arrow.png")) {
+    if (!loadAsset(arrow_texture, sdl_renderer, "arrow.png")) {
         SDL_Log("failed to load media\n");
         return 2;
     }
@@ -127,6 +130,7 @@ int main()
         SDL_SetRenderDrawColor(sdl_renderer, bg_color.r, bg_color.g, bg_color.b, 0xFF);
         SDL_RenderClear(sdl_renderer);
         // render image to screen
+        text.renderText({.x = 0, .y = 0}, sdl_renderer);
         ball.render(sdl_renderer);
 
         const SDL_FPoint arrow_pos{.x = 0.0F, .y = static_cast<float>(k_screen_height - arrow_texture.getHeight())};
@@ -143,6 +147,9 @@ int main()
         SDL_RenderPresent(sdl_renderer);
     }
 
-    close(&sdl_window, ball.getTexture(), &sdl_renderer);
+    ball.getTexture().destory();
+    arrow_texture.destory();
+
+    close(&sdl_window, &sdl_renderer);
     return 0;
 }

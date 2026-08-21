@@ -1,9 +1,9 @@
 #include "texture.hpp"
+#include <SDL3/SDL_error.h>
+#include <SDL3/SDL_render.h>
+#include <SDL3/SDL_surface.h>
+#include <SDL3_image/SDL_image.h>
 #include <optional>
-#include "SDL3/SDL_error.h"
-#include "SDL3/SDL_render.h"
-#include "SDL3/SDL_surface.h"
-#include "SDL3_image/SDL_image.h"
 
 Texture::Texture() : Texture(std::nullopt) {}
 
@@ -37,6 +37,30 @@ bool Texture::loadFromFile(const std::string &path, SDL_Renderer *sdl_renderer)
     sdl_texture = SDL_CreateTextureFromSurface(sdl_renderer, loaded_surface);
     if (sdl_texture == nullptr) {
         SDL_Log("Unable to create texture from surface - SDL error%s\n", SDL_GetError());
+        SDL_DestroySurface(loaded_surface);
+        return false;
+    }
+    m_width = loaded_surface->w;
+    m_height = loaded_surface->h;
+    SDL_DestroySurface(loaded_surface);
+
+    return sdl_texture != nullptr;
+}
+
+bool Texture::loadFromRenderedText(const std::string &textureText, SDL_Color textColor, TTF_Font *font,
+                                   SDL_Renderer *sdl_renderer)
+{
+    destory();
+    SDL_Surface *loaded_surface = TTF_RenderText_Blended(font, textureText.c_str(), 0, textColor);
+    if (loaded_surface == nullptr) {
+        SDL_Log("Unable to create texture from text - SDL error%s\n", SDL_GetError());
+        SDL_DestroySurface(loaded_surface);
+        return false;
+    }
+
+    sdl_texture = SDL_CreateTextureFromSurface(sdl_renderer, loaded_surface);
+    if (sdl_texture == nullptr) {
+        SDL_Log("Unable to create texture from text surface - SDL error%s\n", SDL_GetError());
         SDL_DestroySurface(loaded_surface);
         return false;
     }

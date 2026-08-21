@@ -1,9 +1,10 @@
 #pragma once
+#include <SDL3/SDL_pixels.h>
+#include <SDL3/SDL_render.h>
+#include <SDL3/SDL_surface.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #include <optional>
 #include <string>
-#include "SDL3/SDL_pixels.h"
-#include "SDL3/SDL_render.h"
-#include "SDL3/SDL_surface.h"
 
 class Texture
 {
@@ -22,6 +23,8 @@ class Texture
     Texture &operator=(Texture &&texture) = delete;
 
     bool loadFromFile(const std::string &path, SDL_Renderer *sdl_renderer);
+    bool loadFromRenderedText(const std::string &textureText, SDL_Color textColor, TTF_Font *font,
+                              SDL_Renderer *sdl_renderer);
     void destory();
     void render(SDL_FPoint dst_cords, SDL_Renderer *sdl_renderer, const SDL_FRect *src_rect,
                 const SDL_FPoint *dst_dims);

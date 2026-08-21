@@ -15,6 +15,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIG>")
 # This assumes the SDL source is available in vendored/SDL
 add_subdirectory(vendored/SDL EXCLUDE_FROM_ALL)
 add_subdirectory(vendored/SDL3_Image EXCLUDE_FROM_ALL)
+add_subdirectory(vendored/SDL_ttf EXCLUDE_FROM_ALL)
 
 add_subdirectory(src)
 
@@ -48,10 +49,11 @@ endif()
 # add includes
 target_include_directories(sdl_tetris SYSTEM PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}/vendored/SDL/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/vendored/SDL3_Image/include)
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendored/SDL3_Image/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendored/SDL_ttf/include)
 
 # Link to the actual SDL3 library.
-target_link_libraries(sdl_tetris PRIVATE SDL3::SDL3 SDL3_image::SDL3_image)
+target_link_libraries(sdl_tetris PRIVATE SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf)
 
 # Automatically copy compile_commands.json to the central build/ folder on every configure
 if(CMAKE_EXPORT_COMPILE_COMMANDS)
