@@ -3,14 +3,24 @@
 #include <SDL3/SDL.h>
 
 #include "../sprites.hpp"
+#include "object_base.hpp"
 
 #include <algorithm>
 
-template <typename DirType> class Ball
+class Ball : public ObjectBase
 {
   private:
-    static constexpr size_t TOTAL_DIRS = static_cast<size_t>(DirType::COUNT);
-    Sprites<DirType> sprite;
+    enum class ballDir : uint8_t
+    {
+        UP = 0,
+        DOWN = 1,
+        LEFT = 2,
+        RIGHT = 3,
+        COUNT = 4
+    };
+
+    static constexpr size_t TOTAL_DIRS = static_cast<size_t>(ballDir::COUNT);
+    Sprites<ballDir> sprite;
 
     SDL_FPoint position{.x = 0.0, .y = 0.0};
     SDL_FPoint maxBounds;
@@ -24,16 +34,17 @@ template <typename DirType> class Ball
     static constexpr float MAX_SPEED = 500.0F; // pixels/sec — cap so it doesn't accelerate forever
 
   public:
-    Ball(SDL_FPoint bounds, std::array<DirType, TOTAL_DIRS> dir_map, std::optional<SDL_Color> color_key = std::nullopt)
-        : sprite(dir_map, color_key.value_or(SDL_Color{})), maxBounds(bounds)
+    Ball(SDL_FPoint bounds, std::optional<SDL_Color> color_key = std::nullopt)
+        : sprite({ballDir::LEFT, ballDir::UP, ballDir::DOWN, ballDir::RIGHT}, color_key.value_or(SDL_Color{})),
+          maxBounds(bounds)
     {
         makeCenter();
     }
 
-    void setupSprite(float spr_w, float spr_h, GridDimensions dims, DirType initial_dir)
+    void setupSprite(float spr_w, float spr_h, GridDimensions dims)
     {
         sprite.sliceTextureBox(spr_w, spr_h, dims);
-        sprite.setActiveDir(initial_dir);
+        sprite.setActiveDir(ballDir::UP);
     }
 
     void makeCenter()
@@ -42,7 +53,7 @@ template <typename DirType> class Ball
         position.y = maxBounds.y / 2.F;
     }
 
-    void setDirection(DirType dir)
+    void setDirection(ballDir dir)
     {
         sprite.setActiveDir(dir);
     }
@@ -71,37 +82,12 @@ template <typename DirType> class Ball
         x_mov = true;
     }
 
-    void update(float delat_t)
-    {
-        if (!x_mov) {
-            if (x_vel > 0.0F) {
-                x_vel = std::max(x_vel - (FRICTION * delat_t), 0.0F);
-            } else if (x_vel < 0.0F) {
-                x_vel = std::min(x_vel + (FRICTION * delat_t), 0.0F);
-            }
-        }
-        if (!y_mov) {
-            if (y_vel > 0.0F) {
-                y_vel = std::max(y_vel - (FRICTION * delat_t), 0.0F);
-            } else if (y_vel < 0.0F) {
-                y_vel = std::min(y_vel + (FRICTION * delat_t), 0.0F);
-            }
-        }
-
-        position.x += x_vel * delat_t;
-        position.x = std::clamp(position.x, 0.0F, maxBounds.x);
-        x_mov = false;
-        position.y += y_vel * delat_t;
-        position.y = std::clamp(position.y, 0.0F, maxBounds.y);
-        y_mov = false;
-    }
-
-    void render(SDL_Renderer *renderer)
+    void render(SDL_Renderer *renderer) override
     {
         sprite.renderActive(renderer, position);
     }
 
-    [[nodiscard]] Texture &getTexture()
+    [[nodiscard]] Texture &getTexture() override
     {
         return sprite.getTexture();
     }
@@ -110,4 +96,7 @@ template <typename DirType> class Ball
     {
         return position;
     }
+
+    void update(float delat_t) override;
+    void handleUpdate(const SDL_Event &event) override;
 };

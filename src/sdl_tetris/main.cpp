@@ -2,7 +2,6 @@
 #include <SDL3/SDL_main.h>
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_keyboard.h"
-#include "SDL3/SDL_keycode.h"
 #include "SDL3/SDL_pixels.h"
 #include "SDL3/SDL_render.h"
 #include "SDL3/SDL_stdinc.h"
@@ -10,6 +9,7 @@
 #include "utility.h"
 
 #include "objects/ball.hpp"
+#include "objects/button.hpp"
 #include "text.hpp"
 
 #include <cmath>
@@ -19,15 +19,6 @@ int main()
 {
     constexpr int k_screen_width{640};
     constexpr int k_screen_height{480};
-
-    enum class Direction : uint8_t
-    {
-        UP = 0,
-        DOWN = 1,
-        LEFT = 2,
-        RIGHT = 3,
-        COUNT = 4
-    };
 
     // window to be rendered to
     SDL_Window *sdl_window{nullptr};
@@ -40,10 +31,11 @@ int main()
     }
 
     // character sprite
-    Ball<Direction> ball({.x = k_screen_width, .y = k_screen_height},
-                         {Direction::LEFT, Direction::UP, Direction::DOWN, Direction::RIGHT},
-                         SDL_Color{.r = 0, .g = 180, .b = 180, .a = 0});
-    ball.setupSprite(32.0F, 32.0F, {.rows = 2, .cols = 2}, Direction::UP);
+    Ball ball({.x = k_screen_width, .y = k_screen_height}, SDL_Color{.r = 0, .g = 180, .b = 180, .a = 0});
+    ball.setupSprite(32.0F, 32.0F, {.rows = 2, .cols = 2});
+
+    Button reset_btn;
+    reset_btn.setupSprite(64.0F, 64.0F);
 
     Texture arrow_texture{};
     Text text("Montserrat/Montserrat-VariableFont_wght.ttf", 60);
@@ -53,6 +45,15 @@ int main()
         SDL_Log("failed to load media\n");
         return 2;
     }
+
+    if (!loadAsset(reset_btn.getTexture(), sdl_renderer, "reset_bttn.png")) {
+        SDL_Log("failed to load media\n");
+        return 2;
+    }
+
+    float rst_x = (k_screen_width - (reset_btn.getActiveRect().w / 2.F));
+    float rst_y = (k_screen_height - (reset_btn.getActiveRect().h / 2.F));
+    reset_btn.setPosition({.x = rst_x, .y = rst_y});
 
     if (!loadAsset(arrow_texture, sdl_renderer, "arrow.png")) {
         SDL_Log("failed to load media\n");
@@ -75,23 +76,9 @@ int main()
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_EVENT_QUIT) {
                 quit = true;
-            } else if (event.type == SDL_EVENT_KEY_DOWN) {
-                switch (event.key.key) {
-                case SDLK_UP:
-                    ball.setDirection(Direction::UP);
-                    break;
-                case SDLK_DOWN:
-                    ball.setDirection(Direction::DOWN);
-                    break;
-                case SDLK_LEFT:
-                    ball.setDirection(Direction::LEFT);
-                    break;
-                case SDLK_RIGHT:
-                    ball.setDirection(Direction::RIGHT);
-                    break;
-                default:
-                    break;
-                }
+            } else {
+                ball.handleUpdate(event);
+                reset_btn.handleUpdate(event);
             }
         }
 
@@ -132,6 +119,7 @@ int main()
         // render image to screen
         text.renderText({.x = 0, .y = 0}, sdl_renderer);
         ball.render(sdl_renderer);
+        reset_btn.render(sdl_renderer);
 
         const SDL_FPoint arrow_pos{.x = 0.0F, .y = static_cast<float>(k_screen_height - arrow_texture.getHeight())};
         const SDL_FPoint arrow_center{.x = arrow_pos.x + (static_cast<float>(arrow_texture.getWidth()) / 2.0F),
@@ -148,6 +136,7 @@ int main()
     }
 
     ball.getTexture().destory();
+    reset_btn.getTexture().destory();
     arrow_texture.destory();
 
     close(&sdl_window, &sdl_renderer);
