@@ -16,6 +16,7 @@ void Button::handleUpdate(const SDL_Event &event)
         }
         if (!inside) {
             state = ButtonState::MouseOut;
+            sprite.setActiveDir(ButtonSprite::NORMAL);
             return;
         }
 
@@ -32,6 +33,8 @@ void Button::handleUpdate(const SDL_Event &event)
             sprite.setActiveDir(ButtonSprite::NORMAL);
             break;
         default:
+            state = ButtonState::MouseOut;
+            sprite.setActiveDir(ButtonSprite::NORMAL);
         }
     }
 }

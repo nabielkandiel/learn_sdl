@@ -60,25 +60,25 @@ class Ball : public ObjectBase
 
     void tryUp(float Sdt)
     {
-        y_vel = std::min((y_vel - (ACCEL * Sdt)), -MAX_SPEED);
+        y_vel = std::max((y_vel - (ACCEL * Sdt)), -MAX_SPEED);
         y_mov = true;
     }
 
     void tryDown(float Sdt)
     {
-        y_vel = std::max((y_vel + (ACCEL * Sdt)), MAX_SPEED);
+        y_vel = std::min((y_vel + (ACCEL * Sdt)), MAX_SPEED);
         y_mov = true;
     }
 
     void tryLeft(float Sdt)
     {
-        x_vel = std::min((x_vel - (ACCEL * Sdt)), -MAX_SPEED);
+        x_vel = std::max((x_vel - (ACCEL * Sdt)), -MAX_SPEED);
         x_mov = true;
     }
 
     void tryRight(float Sdt)
     {
-        x_vel = std::max((x_vel + (ACCEL * Sdt)), MAX_SPEED);
+        x_vel = std::min((x_vel + (ACCEL * Sdt)), MAX_SPEED);
         x_mov = true;
     }
 

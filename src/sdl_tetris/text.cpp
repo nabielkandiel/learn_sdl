@@ -21,7 +21,7 @@ Text::Text(const std::string &fontPath, float fontSize, SDL_Color colorVal) : Te
 
 Text::~Text()
 {
-    textTexture.destory();
+    textTexture.destroy();
     TTF_CloseFont(font);
     font = nullptr;
     valid = false;
@@ -43,4 +43,9 @@ bool Text::loadText(const std::string &text, SDL_Renderer *sdl_renderer)
 void Text::renderText(SDL_FPoint location, SDL_Renderer *sdl_renderer)
 {
     textTexture.render(location, sdl_renderer, nullptr, nullptr);
+}
+
+[[nodiscard]] Texture &Text::getTexture()
+{
+    return textTexture;
 }

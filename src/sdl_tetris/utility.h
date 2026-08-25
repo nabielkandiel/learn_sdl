@@ -3,11 +3,17 @@
 #include <SDL3/SDL.h>
 #include "texture.hpp"
 
-// start SDL and creates window
-bool init(SDL_Window **window, SDL_Renderer **renderer, int width, int height);
-
 // loads media
 bool loadAsset(Texture &sdl_texture, SDL_Renderer *renderer, std::string_view fname);
 
-// frees media and shuts down SDL
-void close(SDL_Window **window_pp, SDL_Renderer **renderer);
+struct GridDimensions
+{
+    size_t rows;
+    size_t cols;
+};
+
+struct Size2D
+{
+    int width;
+    int height;
+};

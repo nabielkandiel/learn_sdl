@@ -6,4 +6,5 @@ add_executable(sdl_tetris
     text.cpp
     sprites.hpp
     objects/ball.cpp
-    objects/button.cpp)
+    objects/button.cpp
+    context.cpp)

@@ -13,13 +13,13 @@ Texture::Texture(std::optional<SDL_Color> key) : sdl_texture{nullptr}, color_key
 
 Texture::~Texture()
 {
-    destory();
+    destroy();
     sdl_texture = nullptr;
 }
 
 bool Texture::loadFromFile(const std::string &path, SDL_Renderer *sdl_renderer)
 {
-    destory();
+    destroy();
     SDL_Surface *loaded_surface = IMG_Load(path.c_str());
     if (loaded_surface == nullptr) {
         SDL_Log("Unable to load image %s - SDL image error%s\n", path.c_str(), SDL_GetError());
@@ -50,7 +50,7 @@ bool Texture::loadFromFile(const std::string &path, SDL_Renderer *sdl_renderer)
 bool Texture::loadFromRenderedText(const std::string &textureText, SDL_Color textColor, TTF_Font *font,
                                    SDL_Renderer *sdl_renderer)
 {
-    destory();
+    destroy();
     SDL_Surface *loaded_surface = TTF_RenderText_Blended(font, textureText.c_str(), 0, textColor);
     if (loaded_surface == nullptr) {
         SDL_Log("Unable to create texture from text - SDL error%s\n", SDL_GetError());
@@ -71,7 +71,7 @@ bool Texture::loadFromRenderedText(const std::string &textureText, SDL_Color tex
     return sdl_texture != nullptr;
 }
 
-void Texture::destory()
+void Texture::destroy()
 {
     SDL_DestroyTexture(sdl_texture);
     sdl_texture = nullptr;

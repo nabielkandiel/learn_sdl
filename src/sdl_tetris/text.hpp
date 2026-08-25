@@ -23,6 +23,7 @@ class Text
     [[nodiscard]] bool isValid() const;
     bool loadText(const std::string &text, SDL_Renderer *sdl_renderer);
     void renderText(SDL_FPoint location, SDL_Renderer *sdl_renderer);
+    [[nodiscard]] Texture &getTexture();
 
   private:
     TTF_Font *font{nullptr};

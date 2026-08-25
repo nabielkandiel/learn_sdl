@@ -4,8 +4,8 @@
 #include <concepts>
 #include <span>
 #include <utility>
-#include "gridDimension.hpp"
 #include "texture.hpp"
+#include "utility.h"
 
 template <typename DirType> class Sprites
 {
@@ -51,7 +51,7 @@ template <typename DirType> class Sprites
             view[std::to_underlying(dir)] = {static_cast<float>(idx) * spr_w, static_cast<float>(idy) * spr_h, spr_w,
                                              spr_h};
             idx++;
-            if (idx == dims.rows) {
+            if (idx == dims.cols) {
                 idx = 0;
                 idy++;
             }
