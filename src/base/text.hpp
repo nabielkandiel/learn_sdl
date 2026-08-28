@@ -2,6 +2,7 @@
 
 #include <SDL3_ttf/SDL_ttf.h>
 #include <string>
+#include "font.hpp"
 #include "texture.hpp"
 
 class Text
@@ -15,19 +16,20 @@ class Text
     Text(Text &&texture) = delete;
     Text &operator=(Text &&texture) = delete;
 
-    Text(const std::string &fontPath, float fontSize);
-    Text(const std::string &fontPath, float fontSize, SDL_Color colorVal);
+    Text(const Font &font);
+    Text(const Font &font, SDL_Color colorVal);
 
     ~Text();
 
     [[nodiscard]] bool isValid() const;
-    bool loadText(const std::string &text, SDL_Renderer *sdl_renderer);
+    void setText(const std::string &text);
     void renderText(SDL_FPoint location, SDL_Renderer *sdl_renderer);
     [[nodiscard]] Texture &getTexture();
 
   private:
-    TTF_Font *font{nullptr};
-    bool valid{false};
-    SDL_Color color;
+    const Font &font;
+    SDL_Color color{.r = 0, .g = 0, .b = 0, .a = 0xff};
     Texture textTexture;
+    std::string currText;
+    bool changed{false};
 };

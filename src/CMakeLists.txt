@@ -6,10 +6,11 @@ add_executable(main
     base/utility.cpp
     base/texture.cpp
     base/text.cpp
+    base/context.cpp
     base/sprites.hpp
     objects/ball.cpp
     objects/button.cpp
-    base/context.cpp)
+    objects/timer.cpp)
 
 
 target_include_directories(main PRIVATE 

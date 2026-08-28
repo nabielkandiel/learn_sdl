@@ -8,9 +8,11 @@
 #include "base/utility.h"
 
 #include "base/context.hpp"
+#include "base/font.hpp"
 #include "base/text.hpp"
 #include "objects/ball.hpp"
 #include "objects/button.hpp"
+#include "objects/timer.hpp"
 
 #include <cmath>
 #include <numbers>
@@ -23,6 +25,10 @@ int main()
     Context game({.width = k_screen_width, .height = k_screen_height});
     SDL_Log("Starting with dimension %u x %u\n", k_screen_width, k_screen_height);
 
+    Font main_font("Montserrat/Montserrat-VariableFont_wght.ttf", 60);
+
+    Timer timer(main_font, {.x = 0, .y = 80});
+
     // character sprite
     Ball ball({.x = k_screen_width, .y = k_screen_height}, SDL_Color{.r = 0, .g = 180, .b = 180, .a = 0});
     ball.setupSprite(32.0F, 32.0F, {.rows = 2, .cols = 2});
@@ -32,8 +38,8 @@ int main()
     reset_btn.setOnPress([&ball]() { ball.makeCenter(); });
 
     Texture arrow_texture{};
-    Text text("Montserrat/Montserrat-VariableFont_wght.ttf", 60);
-    text.loadText("Hello World", game.renderer);
+    Text text(main_font);
+    text.setText("Hello World");
 
     if (!loadAsset(ball.getTexture(), game.renderer, "balls.png")) {
         SDL_Log("failed to load media\n");
@@ -73,6 +79,7 @@ int main()
             } else {
                 ball.handleInput(event);
                 reset_btn.handleInput(event);
+                timer.handleInput(event);
             }
         }
 
@@ -107,6 +114,7 @@ int main()
             ball.tryRight(dt_c);
         }
         ball.update(dt_c);
+        timer.update(dt_c);
         // set background to white
         SDL_SetRenderDrawColor(game.renderer, bg_color.r, bg_color.g, bg_color.b, 0xFF);
         SDL_RenderClear(game.renderer);
@@ -114,6 +122,7 @@ int main()
         text.renderText({.x = 0, .y = 0}, game.renderer);
         ball.render(game.renderer);
         reset_btn.render(game.renderer);
+        timer.render(game.renderer);
 
         const SDL_FPoint arrow_pos{.x = 0.0F, .y = static_cast<float>(k_screen_height - arrow_texture.getHeight())};
         const SDL_FPoint arrow_center{.x = arrow_pos.x + (static_cast<float>(arrow_texture.getWidth()) / 2.0F),
@@ -133,6 +142,7 @@ int main()
     reset_btn.getTexture().destroy();
     arrow_texture.destroy();
     text.getTexture().destroy();
+    timer.getTexture().destroy();
 
     return 0;
 }

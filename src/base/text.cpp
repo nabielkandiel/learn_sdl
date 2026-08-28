@@ -1,47 +1,36 @@
 #include "text.hpp"
 #include "config.h"
 
-Text::Text(const std::string &fontPath, float fontSize)
-{
-    std::string path{FONT_PATH};
-    path += fontPath;
-    font = TTF_OpenFont(path.c_str(), fontSize);
-    if (font == nullptr) {
-        SDL_Log("Could not load font file %s, SDL_TTF error %s\n", fontPath.c_str(), SDL_GetError());
-        return;
-    }
+Text::Text(const Font &font) : font(font) {}
 
-    valid = true;
-}
-
-Text::Text(const std::string &fontPath, float fontSize, SDL_Color colorVal) : Text(fontPath, fontSize)
+Text::Text(const Font &font, SDL_Color colorVal) : Text(font)
 {
     color = colorVal;
 }
 
-Text::~Text()
-{
-    textTexture.destroy();
-    TTF_CloseFont(font);
-    font = nullptr;
-    valid = false;
-}
+Text::~Text() = default;
 
 [[nodiscard]] bool Text::isValid() const
 {
-    return valid;
+    return font.isValid();
 }
 
-bool Text::loadText(const std::string &text, SDL_Renderer *sdl_renderer)
+void Text::setText(const std::string &text)
 {
-    if (!valid) {
-        return false;
-    }
-    return textTexture.loadFromRenderedText(text, color, font, sdl_renderer);
+    currText = text;
+    changed = true;
 }
 
 void Text::renderText(SDL_FPoint location, SDL_Renderer *sdl_renderer)
 {
+    if (currText.empty()) {
+        return;
+    }
+
+    if (changed) {
+        textTexture.loadFromRenderedText(currText, color, font.get(), sdl_renderer);
+        changed = false;
+    }
     textTexture.render(location, sdl_renderer, nullptr, nullptr);
 }
 
