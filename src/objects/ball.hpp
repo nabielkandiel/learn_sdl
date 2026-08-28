@@ -2,7 +2,7 @@
 
 #include <SDL3/SDL.h>
 
-#include "../sprites.hpp"
+#include "../base/sprites.hpp"
 #include "object_base.hpp"
 
 #include <algorithm>
@@ -98,5 +98,5 @@ class Ball : public ObjectBase
     }
 
     void update(float delat_t) override;
-    void handleUpdate(const SDL_Event &event) override;
+    void handleInput(const SDL_Event &event) override;
 };

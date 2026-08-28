@@ -2,7 +2,9 @@
 
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_rect.h>
-#include "../sprites.hpp"
+#include <functional>
+#include <utility>
+#include "../base/sprites.hpp"
 #include "object_base.hpp"
 
 class Button : public ObjectBase
@@ -20,20 +22,26 @@ class Button : public ObjectBase
     enum class ButtonSprite : uint8_t
     {
         NORMAL = 0,
-        CLICKED = 1,
+        ACTIVE = 1,
         COUNT = 2,
     };
 
     ButtonState state{ButtonState::NONE};
     SDL_FPoint position{.x = 0.0, .y = 0.0};
     Sprites<ButtonSprite> sprite;
+    std::function<void(void)> on_press;
 
     static constexpr size_t TOTAL_DIRS = static_cast<size_t>(ButtonSprite::COUNT);
 
   public:
     Button(std::optional<SDL_Color> color = std::nullopt)
-        : sprite({ButtonSprite::NORMAL, ButtonSprite::CLICKED}, color.value_or(SDL_Color{}))
+        : sprite({ButtonSprite::NORMAL, ButtonSprite::ACTIVE}, color.value_or(SDL_Color{}))
     {
+    }
+
+    void setOnPress(std::function<void(void)> callback)
+    {
+        on_press = std::move(callback);
     }
 
     void setPosition(SDL_FPoint pos)
@@ -67,5 +75,5 @@ class Button : public ObjectBase
         return sprite.getActiveRect();
     }
 
-    void handleUpdate(const SDL_Event &event) override;
+    void handleInput(const SDL_Event &event) override;
 };

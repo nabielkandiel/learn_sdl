@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.30)
-project(nasty_tetris LANGUAGES CXX)
+project(learnSDL LANGUAGES CXX)
 
 # set this for clangd language server
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -21,7 +21,7 @@ add_subdirectory(src)
 
 # add warnings for my binaries
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
-    target_compile_options(sdl_tetris PRIVATE
+    target_compile_options(main PRIVATE
         -Wall
         -Wextra
         -Wpedantic
@@ -30,7 +30,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "App
         -Wsign-conversion
     )
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    target_compile_options(sdl_tetris PRIVATE
+    target_compile_options(main PRIVATE
         -Wall
         -Wextra
         -Wpedantic
@@ -40,20 +40,20 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         -Wmisleading-indentation
     )
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_compile_options(sdl_tetris PRIVATE
+    target_compile_options(main PRIVATE
         /W4 # Severe, specific, and informational warnings
         /permissive- # Enforces standards conformance
     )
 endif()
 
 # add includes
-target_include_directories(sdl_tetris SYSTEM PRIVATE 
+target_include_directories(main SYSTEM PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}/vendored/SDL/include
     ${CMAKE_CURRENT_SOURCE_DIR}/vendored/SDL3_Image/include
     ${CMAKE_CURRENT_SOURCE_DIR}/vendored/SDL_ttf/include)
 
 # Link to the actual SDL3 library.
-target_link_libraries(sdl_tetris PRIVATE SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf)
+target_link_libraries(main PRIVATE SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf)
 
 # Automatically copy compile_commands.json to the central build/ folder on every configure
 if(CMAKE_EXPORT_COMPILE_COMMANDS)

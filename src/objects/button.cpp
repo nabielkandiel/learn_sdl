@@ -1,6 +1,6 @@
 #include "button.hpp"
 
-void Button::handleUpdate(const SDL_Event &event)
+void Button::handleInput(const SDL_Event &event)
 {
     if (event.type == SDL_EVENT_MOUSE_MOTION || event.type == SDL_EVENT_MOUSE_BUTTON_DOWN ||
         event.type == SDL_EVENT_MOUSE_BUTTON_UP) {
@@ -23,10 +23,13 @@ void Button::handleUpdate(const SDL_Event &event)
         switch (event.type) {
         case SDL_EVENT_MOUSE_MOTION:
             state = ButtonState::MouseOver;
+            sprite.setActiveDir(ButtonSprite::ACTIVE);
             break;
         case SDL_EVENT_MOUSE_BUTTON_DOWN:
             state = ButtonState::MouseDown;
-            sprite.setActiveDir(ButtonSprite::CLICKED);
+            if (on_press) {
+                on_press();
+            }
             break;
         case SDL_EVENT_MOUSE_BUTTON_UP:
             state = ButtonState::MouseUp;

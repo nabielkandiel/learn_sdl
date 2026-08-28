@@ -5,12 +5,12 @@
 #include "SDL3/SDL_pixels.h"
 #include "SDL3/SDL_render.h"
 #include "SDL3/SDL_stdinc.h"
-#include "utility.h"
+#include "base/utility.h"
 
-#include "context.hpp"
+#include "base/context.hpp"
+#include "base/text.hpp"
 #include "objects/ball.hpp"
 #include "objects/button.hpp"
-#include "text.hpp"
 
 #include <cmath>
 #include <numbers>
@@ -29,6 +29,7 @@ int main()
 
     Button reset_btn;
     reset_btn.setupSprite(64.0F, 64.0F);
+    reset_btn.setOnPress([&ball]() { ball.makeCenter(); });
 
     Texture arrow_texture{};
     Text text("Montserrat/Montserrat-VariableFont_wght.ttf", 60);
@@ -60,7 +61,7 @@ int main()
     // default background to white
     SDL_Color bg_color{.r = 0xFF, .g = 0xFF, .b = 0xFF, .a = 0xFF};
 
-    Uint64 last = SDL_GetTicksNS();
+    uint64_t last = SDL_GetTicksNS();
     while (!quit) {
         Uint64 now = SDL_GetTicksNS();
         float dt_c = static_cast<float>(now - last) / 1'000'000'000.0F; // ns → seconds
@@ -70,8 +71,8 @@ int main()
             if (event.type == SDL_EVENT_QUIT) {
                 quit = true;
             } else {
-                ball.handleUpdate(event);
-                reset_btn.handleUpdate(event);
+                ball.handleInput(event);
+                reset_btn.handleInput(event);
             }
         }
 
