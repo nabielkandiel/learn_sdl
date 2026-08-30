@@ -22,6 +22,8 @@ class Texture
     Texture(Texture &&texture) = delete;
     Texture &operator=(Texture &&texture) = delete;
 
+    void setColorKey(SDL_Color key);
+
     bool loadFromFile(const std::string &path, SDL_Renderer *sdl_renderer);
     bool loadFromRenderedText(const std::string &textureText, SDL_Color textColor, TTF_Font *font,
                               SDL_Renderer *sdl_renderer);

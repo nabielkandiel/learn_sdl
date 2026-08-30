@@ -4,10 +4,10 @@
 #include <SDL3/SDL_rect.h>
 #include <functional>
 #include <utility>
-#include "../base/sprites.hpp"
-#include "object_base.hpp"
+#include "base/game_context.hpp"
+#include "base/sprites.hpp"
 
-class Button : public ObjectBase
+class Button
 {
   private:
     enum class ButtonState : Uint8
@@ -33,10 +33,16 @@ class Button : public ObjectBase
 
     static constexpr size_t TOTAL_DIRS = static_cast<size_t>(ButtonSprite::COUNT);
 
+    bool isInside();
+
   public:
-    Button(std::optional<SDL_Color> color = std::nullopt)
-        : sprite({ButtonSprite::NORMAL, ButtonSprite::ACTIVE}, color.value_or(SDL_Color{}))
+    Button(GameContext &context)
+        : sprite(context.getTexture(GameContext::TEXTURES::RESET_BUTTON), {ButtonSprite::NORMAL, ButtonSprite::ACTIVE})
     {
+        auto &input_manager = context.getInputManager();
+        input_manager.bindMouseEvent(SDL_EVENT_MOUSE_MOTION, [this]() { handleMouseMotion(); });
+        input_manager.bindMouseEvent(SDL_EVENT_MOUSE_BUTTON_DOWN, [this]() { handleMouseButtonDown(); });
+        input_manager.bindMouseEvent(SDL_EVENT_MOUSE_BUTTON_UP, [this]() { handleMouseButtonUp(); });
     }
 
     void setOnPress(std::function<void(void)> callback)
@@ -55,17 +61,12 @@ class Button : public ObjectBase
         sprite.setActiveDir(ButtonSprite::NORMAL);
     }
 
-    void update(float delta_t) override
-    {
-        (void)delta_t;
-    }
-
-    void render(SDL_Renderer *render) override
+    void render(SDL_Renderer *render)
     {
         sprite.renderActive(render, position);
     }
 
-    [[nodiscard]] Texture &getTexture() override
+    [[nodiscard]] Texture &getTexture()
     {
         return sprite.getTexture();
     }
@@ -75,5 +76,7 @@ class Button : public ObjectBase
         return sprite.getActiveRect();
     }
 
-    void handleInput(const SDL_Event &event) override;
+    void handleMouseMotion();
+    void handleMouseButtonDown();
+    void handleMouseButtonUp();
 };

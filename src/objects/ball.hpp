@@ -2,8 +2,9 @@
 
 #include <SDL3/SDL.h>
 
-#include "../base/sprites.hpp"
-#include "object_base.hpp"
+#include "base/game_context.hpp"
+#include "base/object_base.hpp"
+#include "base/sprites.hpp"
 
 #include <algorithm>
 
@@ -34,12 +35,7 @@ class Ball : public ObjectBase
     static constexpr float MAX_SPEED = 500.0F; // pixels/sec — cap so it doesn't accelerate forever
 
   public:
-    Ball(SDL_FPoint bounds, std::optional<SDL_Color> color_key = std::nullopt)
-        : sprite({ballDir::LEFT, ballDir::UP, ballDir::DOWN, ballDir::RIGHT}, color_key.value_or(SDL_Color{})),
-          maxBounds(bounds)
-    {
-        makeCenter();
-    }
+    Ball(GameContext &context, SDL_FPoint bounds);
 
     void setupSprite(float spr_w, float spr_h, GridDimensions dims)
     {
@@ -87,16 +83,10 @@ class Ball : public ObjectBase
         sprite.renderActive(renderer, position);
     }
 
-    [[nodiscard]] Texture &getTexture() override
-    {
-        return sprite.getTexture();
-    }
-
     [[nodiscard]] SDL_FPoint getPosition() const
     {
         return position;
     }
 
     void update(float delat_t) override;
-    void handleInput(const SDL_Event &event) override;
 };

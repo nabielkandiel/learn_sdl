@@ -5,16 +5,17 @@
 #include <SDL3_image/SDL_image.h>
 #include <optional>
 
-Texture::Texture() : Texture(std::nullopt) {}
-
-Texture::Texture(SDL_Color key) : Texture{std::optional<SDL_Color>{key}} {}
-
-Texture::Texture(std::optional<SDL_Color> key) : sdl_texture{nullptr}, color_key{key}, m_width{0}, m_height{0} {}
+Texture::Texture() : sdl_texture{nullptr}, m_width{0}, m_height{0} {}
 
 Texture::~Texture()
 {
     destroy();
     sdl_texture = nullptr;
+}
+
+void Texture::setColorKey(SDL_Color key)
+{
+    color_key = key;
 }
 
 bool Texture::loadFromFile(const std::string &path, SDL_Renderer *sdl_renderer)

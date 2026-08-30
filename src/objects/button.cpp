@@ -1,43 +1,50 @@
 #include "button.hpp"
 
-void Button::handleInput(const SDL_Event &event)
+void Button::handleMouseMotion()
 {
-    if (event.type == SDL_EVENT_MOUSE_MOTION || event.type == SDL_EVENT_MOUSE_BUTTON_DOWN ||
-        event.type == SDL_EVENT_MOUSE_BUTTON_UP) {
-        float mouse_x = -1.F;
-        float mouse_y = -1.F;
-        float width = sprite.getActiveRect().w;
-        float height = sprite.getActiveRect().h;
-        SDL_GetMouseState(&mouse_x, &mouse_y);
-        bool inside = true;
-        if ((mouse_x < (position.x - (width / 2))) || (mouse_x > (position.x + (width / 2))) ||
-            (mouse_y < (position.y - (height / 2))) || (mouse_y > (position.y + (height / 2)))) {
-            inside = false;
-        }
-        if (!inside) {
-            state = ButtonState::MouseOut;
-            sprite.setActiveDir(ButtonSprite::NORMAL);
-            return;
-        }
-
-        switch (event.type) {
-        case SDL_EVENT_MOUSE_MOTION:
-            state = ButtonState::MouseOver;
-            sprite.setActiveDir(ButtonSprite::ACTIVE);
-            break;
-        case SDL_EVENT_MOUSE_BUTTON_DOWN:
-            state = ButtonState::MouseDown;
-            if (on_press) {
-                on_press();
-            }
-            break;
-        case SDL_EVENT_MOUSE_BUTTON_UP:
-            state = ButtonState::MouseUp;
-            sprite.setActiveDir(ButtonSprite::NORMAL);
-            break;
-        default:
-            state = ButtonState::MouseOut;
-            sprite.setActiveDir(ButtonSprite::NORMAL);
-        }
+    if (!isInside()) {
+        return;
     }
+    state = ButtonState::MouseOver;
+    sprite.setActiveDir(ButtonSprite::ACTIVE);
+}
+
+void Button::handleMouseButtonDown()
+{
+    if (!isInside()) {
+        return;
+    }
+    state = ButtonState::MouseDown;
+    if (on_press) {
+        on_press();
+    }
+}
+
+void Button::handleMouseButtonUp()
+{
+    if (!isInside()) {
+        return;
+    }
+    state = ButtonState::MouseUp;
+    sprite.setActiveDir(ButtonSprite::NORMAL);
+}
+
+bool Button::isInside()
+{
+    float mouse_x = -1.F;
+    float mouse_y = -1.F;
+    float width = sprite.getActiveRect().w;
+    float height = sprite.getActiveRect().h;
+    SDL_GetMouseState(&mouse_x, &mouse_y);
+    bool inside = true;
+    if ((mouse_x < (position.x - (width / 2))) || (mouse_x > (position.x + (width / 2))) ||
+        (mouse_y < (position.y - (height / 2))) || (mouse_y > (position.y + (height / 2)))) {
+        inside = false;
+    }
+    if (!inside) {
+        state = ButtonState::MouseOut;
+        sprite.setActiveDir(ButtonSprite::NORMAL);
+        return false;
+    }
+    return true;
 }

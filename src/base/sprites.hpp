@@ -11,15 +11,14 @@ template <typename DirType> class Sprites
 {
   private:
     static constexpr size_t TOTAL_DIRS = static_cast<size_t>(DirType::COUNT);
-    Texture texture;
+    Texture &texture;
     std::array<SDL_FRect, TOTAL_DIRS> sprite_rects;
     std::array<DirType, TOTAL_DIRS> dir_map;
     DirType active_dir;
 
   public:
     // passed is (index in png -> direction it represents)
-    Sprites(std::array<DirType, TOTAL_DIRS> dir_map, SDL_Color key) : texture(key), dir_map(dir_map) {}
-    Sprites(std::array<DirType, TOTAL_DIRS> dir_map) : texture(std::nullopt), dir_map(dir_map) {}
+    Sprites(Texture &texture, std::array<DirType, TOTAL_DIRS> dir_map) : texture(texture), dir_map(dir_map) {}
     ~Sprites() = default;
     // dont allow this struct to be copied or moved
     Sprites(const Sprites &) = delete;            // Copy Constructor

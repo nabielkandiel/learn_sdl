@@ -6,14 +6,16 @@ add_executable(main
     base/utility.cpp
     base/texture.cpp
     base/text.cpp
-    base/context.cpp
+    base/game_context.cpp
     base/sprites.hpp
     objects/ball.cpp
     objects/button.cpp
-    objects/timer.cpp)
+    objects/timer.cpp
+    objects/arrow.cpp)
 
 
 target_include_directories(main PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/config
     ${CMAKE_CURRENT_BINARY_DIR}/config
 )

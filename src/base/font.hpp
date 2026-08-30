@@ -7,10 +7,10 @@
 class Font
 {
   public:
-    Font(const std::string &fontPath, float fontSize)
+    Font(const std::string &path, float fontSize)
     {
-        std::string path = std::string(FONT_PATH) + fontPath;
-        m_font = TTF_OpenFont(path.c_str(), fontSize);
+        std::string font_path = std::string(FONT_PATH) + path;
+        m_font = TTF_OpenFont(font_path.c_str(), fontSize);
     }
 
     ~Font()
