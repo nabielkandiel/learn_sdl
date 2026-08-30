@@ -6,6 +6,7 @@ Ball::Ball(GameContext &context, SDL_FPoint bounds)
       maxBounds(bounds)
 {
     makeCenter();
+    setupSprite(32.0F, 32.0F, {.rows = 2, .cols = 2});
 
     auto &input_manager = context.getInputManager();
     input_manager.bindKeyDown(SDLK_UP, [this]() { setDirection(ballDir::UP); });

@@ -34,14 +34,14 @@ class Ball : public ObjectBase
     static constexpr float FRICTION = 4000.0F; // pixels/sec² — how fast it slows when released
     static constexpr float MAX_SPEED = 500.0F; // pixels/sec — cap so it doesn't accelerate forever
 
-  public:
-    Ball(GameContext &context, SDL_FPoint bounds);
-
     void setupSprite(float spr_w, float spr_h, GridDimensions dims)
     {
         sprite.sliceTextureBox(spr_w, spr_h, dims);
         sprite.setActiveDir(ballDir::UP);
     }
+
+  public:
+    Ball(GameContext &context, SDL_FPoint bounds);
 
     void makeCenter()
     {

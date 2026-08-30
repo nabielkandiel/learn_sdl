@@ -7,7 +7,7 @@
 #include "base/game_context.hpp"
 #include "base/sprites.hpp"
 
-class Button
+class Button : public ObjectBase
 {
   private:
     enum class ButtonState : Uint8
@@ -34,6 +34,11 @@ class Button
     static constexpr size_t TOTAL_DIRS = static_cast<size_t>(ButtonSprite::COUNT);
 
     bool isInside();
+    void setupSprite(float spr_w, float spr_h)
+    {
+        sprite.sliceTextureHorizontal(spr_w, spr_h);
+        sprite.setActiveDir(ButtonSprite::NORMAL);
+    }
 
   public:
     Button(GameContext &context)
@@ -43,6 +48,12 @@ class Button
         input_manager.bindMouseEvent(SDL_EVENT_MOUSE_MOTION, [this]() { handleMouseMotion(); });
         input_manager.bindMouseEvent(SDL_EVENT_MOUSE_BUTTON_DOWN, [this]() { handleMouseButtonDown(); });
         input_manager.bindMouseEvent(SDL_EVENT_MOUSE_BUTTON_UP, [this]() { handleMouseButtonUp(); });
+
+        context.getEntityManager().registerEntity(*this);
+
+        setupSprite(64.0F, 64.0F);
+        position.x = (static_cast<float>(context.getScreenWidth()) - (sprite.getActiveRect().w / 2.F));
+        position.y = (static_cast<float>(context.getScreenHeight()) - (sprite.getActiveRect().h / 2.F));
     }
 
     void setOnPress(std::function<void(void)> callback)
@@ -50,21 +61,12 @@ class Button
         on_press = std::move(callback);
     }
 
-    void setPosition(SDL_FPoint pos)
-    {
-        position = pos;
-    }
-
-    void setupSprite(float spr_w, float spr_h)
-    {
-        sprite.sliceTextureHorizontal(spr_w, spr_h);
-        sprite.setActiveDir(ButtonSprite::NORMAL);
-    }
-
-    void render(SDL_Renderer *render)
+    void render(SDL_Renderer *render) override
     {
         sprite.renderActive(render, position);
     }
+
+    void update(float /*delat_t*/) override {}
 
     [[nodiscard]] Texture &getTexture()
     {

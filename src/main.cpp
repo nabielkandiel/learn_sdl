@@ -35,19 +35,13 @@ int main()
 
     // character sprite
     Ball ball(game, {.x = k_screen_width, .y = k_screen_height});
-    ball.setupSprite(32.0F, 32.0F, {.rows = 2, .cols = 2});
 
     Button reset_btn(game);
-    reset_btn.setupSprite(64.0F, 64.0F);
     reset_btn.setOnPress([&ball]() { ball.makeCenter(); });
 
     Arrow arrow{game, std::nullopt, ball};
     Text text(main_font);
     text.setText("Hello World");
-
-    float rst_x = (k_screen_width - (reset_btn.getActiveRect().w / 2.F));
-    float rst_y = (k_screen_height - (reset_btn.getActiveRect().h / 2.F));
-    reset_btn.setPosition({.x = rst_x, .y = rst_y});
 
     bool quit{false};
     SDL_Event event;
@@ -76,7 +70,6 @@ int main()
         SDL_RenderClear(game.getRenderer());
         // render image to screen
         text.renderText({.x = 0, .y = 0}, game.getRenderer());
-        reset_btn.render(game.getRenderer());
         entity_manager.renderEntities(game.getRenderer());
 
         // update screen
