@@ -22,15 +22,12 @@ struct GameContext
         RESET_BUTTON = 2,
     };
 
-    GameContext(const GameContext &) = default;
+    GameContext(const GameContext &) = delete;
     GameContext(GameContext &&) = delete;
-    GameContext &operator=(const GameContext &) = default;
+    GameContext &operator=(const GameContext &) = delete;
     GameContext &operator=(GameContext &&) = delete;
 
-    GameContext(Size2D screen) : width(screen.width), height(screen.height)
-    {
-        init();
-    }
+    GameContext(Size2D screen);
 
     ~GameContext()
     {
@@ -69,8 +66,6 @@ struct GameContext
 
     bool init();
     void close();
-    [[nodiscard]] bool enableVsync() const;
-    [[nodiscard]] bool disableVsync() const;
 
   private:
     void loadTextures();

@@ -1,36 +1,6 @@
+#include <SDL3/SDL.h>
+
 #include "timer.hpp"
-
-Timer::Timer(GameContext &context, Font &font, SDL_FPoint pos) : text(font), position(pos)
-{
-    auto &input_manager = context.getInputManager();
-    input_manager.bindKeyDown(SDLK_RETURN, [this]() {
-        if (started) {
-            stop();
-        } else {
-            start();
-        }
-    });
-
-    input_manager.bindKeyDown(SDLK_SPACE, [this]() {
-        if (paused) {
-            unpause();
-        } else {
-            pause();
-        }
-    });
-
-    context.getEntityManager().registerEntity(*this);
-};
-
-void Timer::update(float /*delat_t*/)
-{
-    text.setText("MS since start: " + std::to_string(getTicksNS() / 1'000'000));
-}
-
-void Timer::render(SDL_Renderer *renderer)
-{
-    text.renderText(position, renderer);
-}
 
 void Timer::start()
 {

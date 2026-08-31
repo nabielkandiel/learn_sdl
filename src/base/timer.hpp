@@ -1,20 +1,14 @@
 #pragma once
 
 #include <cstdint>
-#include "base/font.hpp"
-#include "base/game_context.hpp"
-#include "base/object_base.hpp"
-#include "base/text.hpp"
 
-class Timer : public ObjectBase
+class Timer
 {
   private:
     uint64_t timer_start{0};
     uint64_t timer_paused{0};
     bool started{false};
     bool paused{false};
-    Text text;
-    SDL_FPoint position{.x = 10.F, .y = 10.F};
 
   public:
     Timer(const Timer &) = delete;
@@ -22,12 +16,8 @@ class Timer : public ObjectBase
     Timer &operator=(const Timer &) = delete;
     Timer &operator=(Timer &&) noexcept = delete;
 
-    Timer(GameContext &context, Font &font) : Timer(context, font, {.x = 10.F, .y = 10.F}) {};
-    Timer(GameContext &context, Font &font, SDL_FPoint pos);
-    ~Timer() override = default;
-
-    void update(float delta_t) override;
-    void render(SDL_Renderer *renderer) override;
+    Timer() = default;
+    ~Timer() = default;
 
     void start();
     void stop();

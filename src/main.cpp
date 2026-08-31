@@ -7,11 +7,12 @@
 
 #include "base/font.hpp"
 #include "base/game_context.hpp"
+#include "base/settings.hpp"
 #include "base/text.hpp"
 #include "objects/arrow.hpp"
 #include "objects/ball.hpp"
 #include "objects/button.hpp"
-#include "objects/timer.hpp"
+#include "objects/frame_label.hpp"
 
 int main()
 {
@@ -21,8 +22,9 @@ int main()
     GameContext game({.width = k_screen_width, .height = k_screen_height});
     auto &input_manager = game.getInputManager();
     auto &entity_manager = game.getEntityManager();
+    Settings settings(game);
 
-    if (game.enableVsync()) {
+    if (settings.enableVsync()) {
         SDL_Log("VSYNC ENABLED\n");
     }
 
@@ -31,7 +33,7 @@ int main()
     Font main_font("Montserrat/Montserrat-VariableFont_wght.ttf", 60);
     Font small_font("Montserrat/Montserrat-VariableFont_wght.ttf", 20);
 
-    Timer timer(game, small_font, {.x = 0, .y = 80});
+    FrameLabel frame_label(game, small_font, {.x = 0, .y = 80});
 
     // character sprite
     Ball ball(game, {.x = k_screen_width, .y = k_screen_height});
@@ -52,6 +54,7 @@ int main()
 
     uint64_t last = SDL_GetTicksNS();
     while (!quit) {
+        settings.startTimer();
         Uint64 now = SDL_GetTicksNS();
         float dt_c = static_cast<float>(now - last) / 1'000'000'000.0F; // ns → seconds
         last = now;

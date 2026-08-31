@@ -7,10 +7,12 @@ add_executable(main
     base/texture.cpp
     base/text.cpp
     base/game_context.cpp
+    base/settings.cpp
     base/sprites.hpp
+    base/timer.cpp
     objects/ball.cpp
     objects/button.cpp
-    objects/timer.cpp
+    objects/frame_label.cpp
     objects/arrow.cpp)
 
 

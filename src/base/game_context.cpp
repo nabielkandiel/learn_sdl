@@ -1,5 +1,10 @@
 #include "game_context.hpp"
 
+GameContext::GameContext(Size2D screen) : width(screen.width), height(screen.height)
+{
+    init();
+}
+
 bool GameContext::init()
 {
     if (!SDL_Init(SDL_INIT_VIDEO)) {
@@ -19,24 +24,6 @@ bool GameContext::init()
 
     loadTextures();
 
-    return true;
-}
-
-bool GameContext::enableVsync() const
-{
-    if (!SDL_SetRenderVSync(renderer, 1)) {
-        SDL_Log("Failed to enable vsync - SDL error: %s\n", SDL_GetError());
-        return false;
-    }
-    return true;
-}
-
-bool GameContext::disableVsync() const
-{
-    if (!SDL_SetRenderVSync(renderer, 0)) {
-        SDL_Log("Failed to disable vsync - SDL error: %s\n", SDL_GetError());
-        return false;
-    }
     return true;
 }
 
