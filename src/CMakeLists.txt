@@ -10,6 +10,7 @@ add_executable(main
     base/settings.cpp
     base/sprites.hpp
     base/timer.cpp
+    base/object_base.cpp
     objects/ball.cpp
     objects/button.cpp
     objects/frame_label.cpp

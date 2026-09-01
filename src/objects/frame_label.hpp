@@ -21,7 +21,7 @@ class FrameLabel : public ObjectBase
 
     FrameLabel(GameContext &context, Font &font) : FrameLabel(context, font, {.x = 10.F, .y = 10.F}) {};
     FrameLabel(GameContext &context, Font &font, SDL_FPoint pos);
-    ~FrameLabel() override = default;
+    ~FrameLabel() override;
 
     void update(float delta_t) override;
     void render(SDL_Renderer *renderer) override;

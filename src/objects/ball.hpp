@@ -41,7 +41,13 @@ class Ball : public ObjectBase
     }
 
   public:
+    Ball(const Ball &) = delete;
+    Ball(Ball &&) = delete;
+    Ball &operator=(const Ball &) = delete;
+    Ball &operator=(Ball &&) = delete;
+
     Ball(GameContext &context, SDL_FPoint bounds);
+    ~Ball() override;
 
     void makeCenter()
     {

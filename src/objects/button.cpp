@@ -1,5 +1,24 @@
 #include "button.hpp"
 
+Button::Button(GameContext &context)
+    : ObjectBase(context),
+      sprite(context.getTexture(GameContext::TEXTURES::RESET_BUTTON), {ButtonSprite::NORMAL, ButtonSprite::ACTIVE})
+{
+    auto &input_manager = context.getInputManager();
+    input_manager.bindMouseEvent(this, SDL_EVENT_MOUSE_MOTION, [this]() { handleMouseMotion(); });
+    input_manager.bindMouseEvent(this, SDL_EVENT_MOUSE_BUTTON_DOWN, [this]() { handleMouseButtonDown(); });
+    input_manager.bindMouseEvent(this, SDL_EVENT_MOUSE_BUTTON_UP, [this]() { handleMouseButtonUp(); });
+
+    setupSprite(64.0F, 64.0F);
+    position.x = (static_cast<float>(context.getScreenWidth()) - (sprite.getActiveRect().w / 2.F));
+    position.y = (static_cast<float>(context.getScreenHeight()) - (sprite.getActiveRect().h / 2.F));
+}
+
+Button::~Button()
+{
+    getInputManager().unbindAll(this);
+}
+
 void Button::handleMouseMotion()
 {
     if (!isInside()) {

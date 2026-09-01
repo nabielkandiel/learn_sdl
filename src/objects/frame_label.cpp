@@ -1,9 +1,10 @@
 #include "frame_label.hpp"
 
-FrameLabel::FrameLabel(GameContext &context, Font &font, SDL_FPoint pos) : text(font), position(pos)
+FrameLabel::FrameLabel(GameContext &context, Font &font, SDL_FPoint pos)
+    : ObjectBase(context), text(font), position(pos)
 {
     auto &input_manager = context.getInputManager();
-    input_manager.bindKeyDown(SDLK_RETURN, [this]() {
+    input_manager.bindKeyDown(this, SDLK_RETURN, [this]() {
         if (timer.isStarted()) {
             timer.stop();
         } else {
@@ -11,16 +12,19 @@ FrameLabel::FrameLabel(GameContext &context, Font &font, SDL_FPoint pos) : text(
         }
     });
 
-    input_manager.bindKeyDown(SDLK_SPACE, [this]() {
+    input_manager.bindKeyDown(this, SDLK_SPACE, [this]() {
         if (timer.isPaused()) {
             timer.unpause();
         } else {
             timer.pause();
         }
     });
-
-    context.getEntityManager().registerEntity(*this);
 };
+
+FrameLabel::~FrameLabel()
+{
+    getInputManager().unbindAll(this);
+}
 
 void FrameLabel::update(float /*delat_t*/)
 {

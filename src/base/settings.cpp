@@ -3,12 +3,17 @@
 #include <SDL3/SDL_keycode.h>
 #include <SDL3/SDL_log.h>
 
-Settings::Settings(GameContext &context) : renderer(context.getRenderer())
+Settings::Settings(GameContext &context) : renderer(context.getRenderer()), context(std::addressof(context))
 {
     auto &input_manager = context.getInputManager();
 
-    input_manager.bindKeyDown(SDLK_V, [this]() { vSyncEnabled ? disableVsync() : enableVsync(); });
+    input_manager.bindKeyDown(this, SDLK_V, [this]() { vSyncEnabled ? disableVsync() : enableVsync(); });
 };
+
+Settings::~Settings()
+{
+    context->getInputManager().unbindAll(this);
+}
 
 bool Settings::enableVsync()
 {

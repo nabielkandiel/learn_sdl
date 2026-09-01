@@ -2,7 +2,7 @@
 #include <cmath>
 
 Arrow::Arrow(GameContext &context, std::optional<SDL_FPoint> pos, Ball &ball)
-    : ball(ball), texture(context.getTexture(GameContext::TEXTURES::ARROW))
+    : ObjectBase(context), ball(ball), texture(context.getTexture(GameContext::TEXTURES::ARROW))
 {
     if (pos) {
         position = pos.value();
@@ -12,8 +12,6 @@ Arrow::Arrow(GameContext &context, std::optional<SDL_FPoint> pos, Ball &ball)
 
     center.x = position.x + (static_cast<float>(texture.getWidth()) / 2.0F);
     center.y = position.y + (static_cast<float>(texture.getHeight()) / 2.0F);
-
-    context.getEntityManager().registerEntity(*this);
 }
 
 void Arrow::update(float /*unused*/)

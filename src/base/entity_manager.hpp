@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <unordered_set>
-#include "object_base.hpp"
+#include "base/object_base.hpp"
 
 class EntityManager
 {
@@ -16,6 +16,11 @@ class EntityManager
             return;
         }
         entities.insert(addr);
+    }
+
+    void unregisterEntity(ObjectBase &entity)
+    {
+        entities.erase(std::addressof(entity));
     }
 
     void updateEntites(float delta_t)

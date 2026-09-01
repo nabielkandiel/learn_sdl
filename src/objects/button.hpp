@@ -41,20 +41,13 @@ class Button : public ObjectBase
     }
 
   public:
-    Button(GameContext &context)
-        : sprite(context.getTexture(GameContext::TEXTURES::RESET_BUTTON), {ButtonSprite::NORMAL, ButtonSprite::ACTIVE})
-    {
-        auto &input_manager = context.getInputManager();
-        input_manager.bindMouseEvent(SDL_EVENT_MOUSE_MOTION, [this]() { handleMouseMotion(); });
-        input_manager.bindMouseEvent(SDL_EVENT_MOUSE_BUTTON_DOWN, [this]() { handleMouseButtonDown(); });
-        input_manager.bindMouseEvent(SDL_EVENT_MOUSE_BUTTON_UP, [this]() { handleMouseButtonUp(); });
+    Button(const Button &) = delete;
+    Button(Button &&) = delete;
+    Button &operator=(const Button &) = delete;
+    Button &operator=(Button &&) = delete;
 
-        context.getEntityManager().registerEntity(*this);
-
-        setupSprite(64.0F, 64.0F);
-        position.x = (static_cast<float>(context.getScreenWidth()) - (sprite.getActiveRect().w / 2.F));
-        position.y = (static_cast<float>(context.getScreenHeight()) - (sprite.getActiveRect().h / 2.F));
-    }
+    Button(GameContext &context);
+    ~Button() override;
 
     void setOnPress(std::function<void(void)> callback)
     {

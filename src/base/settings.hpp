@@ -14,7 +14,7 @@ struct Settings
     Settings(Settings &&) = delete;
     Settings &operator=(const Settings &) = delete;
     Settings &operator=(Settings &&) = delete;
-    ~Settings() = default;
+    ~Settings();
 
     void startTimer()
     {
@@ -34,4 +34,5 @@ struct Settings
     uint64_t renderingNs{0};
     SDL_Renderer *renderer{nullptr};
     Timer frame_timer;
+    GameContext *context{nullptr};
 };
