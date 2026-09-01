@@ -8,11 +8,11 @@
 #include "base/font.hpp"
 #include "base/game_context.hpp"
 #include "base/settings.hpp"
-#include "base/text.hpp"
 #include "objects/arrow.hpp"
 #include "objects/ball.hpp"
 #include "objects/button.hpp"
 #include "objects/frame_label.hpp"
+#include "objects/label.hpp"
 
 int main()
 {
@@ -42,8 +42,8 @@ int main()
     reset_btn.setOnPress([&ball]() { ball.makeCenter(); });
 
     Arrow arrow{game, std::nullopt, ball};
-    Text text(main_font);
-    text.setText("Hello World");
+    Label hello(game, main_font);
+    hello.setText("Hello World");
 
     bool quit{false};
     SDL_Event event;
@@ -68,11 +68,12 @@ int main()
         }
         input_manager.update(dt_c);
         entity_manager.updateEntites(dt_c);
+
         // set background to white
         SDL_SetRenderDrawColor(game.getRenderer(), bg_color.r, bg_color.g, bg_color.b, 0xFF);
         SDL_RenderClear(game.getRenderer());
+
         // render image to screen
-        text.renderText({.x = 0, .y = 0}, game.getRenderer());
         entity_manager.renderEntities(game.getRenderer());
 
         // update screen

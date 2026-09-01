@@ -13,7 +13,8 @@ add_executable(main
     objects/ball.cpp
     objects/button.cpp
     objects/frame_label.cpp
-    objects/arrow.cpp)
+    objects/arrow.cpp
+    objects/label.cpp)
 
 
 target_include_directories(main PRIVATE 
