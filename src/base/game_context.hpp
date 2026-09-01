@@ -10,9 +10,10 @@
 
 #include "entity_manager.hpp"
 #include "input_manager.hpp"
+#include "settings.hpp"
 #include "utility.h"
 
-struct GameContext
+class GameContext
 {
   public:
     enum class TEXTURES : uint8_t
@@ -59,6 +60,11 @@ struct GameContext
         return entityManager;
     }
 
+    Settings &getSettings()
+    {
+        return settings;
+    }
+
     Texture &getTexture(TEXTURES text)
     {
         return texture_map[text];
@@ -75,6 +81,7 @@ struct GameContext
     SDL_Renderer *renderer{nullptr};
     InputManager inputManager;
     EntityManager entityManager;
+    Settings settings;
     std::unordered_map<TEXTURES, Texture> texture_map;
 
     int width;

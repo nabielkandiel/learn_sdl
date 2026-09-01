@@ -22,9 +22,8 @@ int main()
     GameContext game({.width = k_screen_width, .height = k_screen_height});
     auto &input_manager = game.getInputManager();
     auto &entity_manager = game.getEntityManager();
-    Settings settings(game);
 
-    if (settings.enableVsync()) {
+    if (game.getSettings().enableVsync()) {
         SDL_Log("VSYNC ENABLED\n");
     }
 
@@ -54,7 +53,6 @@ int main()
 
     uint64_t last = SDL_GetTicksNS();
     while (!quit) {
-        settings.startTimer();
         Uint64 now = SDL_GetTicksNS();
         float dt_c = static_cast<float>(now - last) / 1'000'000'000.0F; // ns → seconds
         last = now;

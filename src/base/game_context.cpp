@@ -22,6 +22,8 @@ bool GameContext::init()
         return false;
     }
 
+    settings.setRenderer(renderer);
+
     loadTextures();
 
     return true;

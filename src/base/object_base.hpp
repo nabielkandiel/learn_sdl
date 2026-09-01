@@ -4,7 +4,7 @@
 
 class EntityManager;
 class InputManager;
-struct GameContext;
+class GameContext;
 
 class ObjectBase
 {

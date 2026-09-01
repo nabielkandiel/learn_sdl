@@ -1,38 +1,32 @@
 #pragma once
 
 #include <SDL3/SDL_render.h>
-#include <cstdint>
-
-#include "base/timer.hpp"
-#include "game_context.hpp"
 
 struct Settings
 {
   public:
-    Settings(GameContext &gameContext);
+    Settings() = default;
     Settings(const Settings &) = delete;
     Settings(Settings &&) = delete;
     Settings &operator=(const Settings &) = delete;
     Settings &operator=(Settings &&) = delete;
-    ~Settings();
-
-    void startTimer()
-    {
-        frame_timer.start();
-    }
-    void stopTimer()
-    {
-        frame_timer.stop();
-    }
+    ~Settings() = default;
 
     bool enableVsync();
     bool disableVsync();
 
+    [[nodiscard]] bool vsyncEnabled() const
+    {
+        return vSyncEnabled;
+    }
+
+    void setRenderer(SDL_Renderer *rend)
+    {
+        renderer = rend;
+    }
+
   private:
-    bool vSyncEnabled{true};
-    bool fpsCapEnabled{true};
-    uint64_t renderingNs{0};
+    bool vSyncEnabled{false};
+    bool fpsCapEnabled{false};
     SDL_Renderer *renderer{nullptr};
-    Timer frame_timer;
-    GameContext *context{nullptr};
 };
