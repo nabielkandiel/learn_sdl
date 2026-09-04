@@ -4,80 +4,59 @@
 #include <SDL3/SDL_keycode.h>
 #include <functional>
 
+#include "common/CommonEnums.hpp"
+
 class InputManager
 {
   public:
     using ActionCallback = std::function<void()>;
     using ContinuousCallback = std::function<void(float delata_t)>;
 
-    void bindKeyDown(const void *owner, SDL_Keycode key, ActionCallback callback)
+    void bindKeyDown(const void *owner, SDL_Keycode key, InputState state,
+                     ActionCallback callback)
     {
-        keyDownBindings[key].push_back({.owner = owner, .callback = std::move(callback)});
+        keyDownBindings[key].push_back(
+            {.owner = owner, .callback = std::move(callback), .state = state});
     }
 
-    void bindHeldKey(const void *owner, SDL_Scancode scanCode, ContinuousCallback callback)
+    void bindHeldKey(const void *owner, SDL_Scancode scanCode, InputState state,
+                     ContinuousCallback callback)
     {
-        heldKeyBindings[scanCode].push_back({.owner = owner, .callback = std::move(callback)});
+        heldKeyBindings[scanCode].push_back(
+            {.owner = owner, .callback = std::move(callback), .state = state});
     }
 
-    void bindMouseEvent(const void *owner, uint32_t eventType, ActionCallback callback)
+    void bindMouseEvent(const void *owner, uint32_t eventType, InputState state,
+                        ActionCallback callback)
     {
-        mouseBinding[eventType].push_back({.owner = owner, .callback = std::move(callback)});
+        mouseBinding[eventType].push_back(
+            {.owner = owner, .callback = std::move(callback), .state = state});
     }
 
-    void handleEvent(const SDL_Event &event)
+    void setInputState(InputState state)
     {
-        if (event.type == SDL_EVENT_KEY_DOWN && !event.key.repeat) {
-            auto itter = keyDownBindings.find(event.key.key);
-            if (itter != keyDownBindings.end()) {
-                for (const auto &binding : itter->second) {
-                    binding.callback();
-                }
-            }
-        } else {
-            auto itter = mouseBinding.find(event.type);
-            if (itter != mouseBinding.end()) {
-                for (const auto &binding : itter->second) {
-                    binding.callback();
-                }
-            }
-        }
+        input_state = state;
     }
 
-    void update(float delta_t)
-    {
-        const bool *key_states = SDL_GetKeyboardState(nullptr);
-        for (const auto &[scancode, callbacks] : heldKeyBindings) {
-            if (key_states[scancode]) {
-                for (const auto &binding : callbacks) {
-                    binding.callback(delta_t);
-                }
-            }
-        }
-    }
-
-    void unbindAll(const void *owner)
-    {
-        auto remove_owner = [owner](auto &map) {
-            for (auto &[key, list] : map) {
-                std::erase_if(list, [owner](const auto &bind) { return bind.owner == owner; });
-            }
-        };
-
-        remove_owner(keyDownBindings);
-        remove_owner(mouseBinding);
-        remove_owner(heldKeyBindings);
-    }
+    void handleEvent(const SDL_Event &event);
+    void update(float delta_t);
+    void unbindAll(const void *owner);
 
   private:
     template <typename CB> struct Binding
     {
         const void *owner;
         CB callback;
+        InputState state;
     };
 
-    std::unordered_map<SDL_Keycode, std::vector<Binding<ActionCallback>>> keyDownBindings;
+    InputState input_state{InputState::PLAYING};
+
+    std::unordered_map<SDL_Keycode, std::vector<Binding<ActionCallback>>>
+        keyDownBindings;
     //                 //event type
-    std::unordered_map<uint32_t, std::vector<Binding<ActionCallback>>> mouseBinding;
-    std::unordered_map<SDL_Scancode, std::vector<Binding<ContinuousCallback>>> heldKeyBindings;
+    std::unordered_map<uint32_t, std::vector<Binding<ActionCallback>>>
+        mouseBinding;
+    std::unordered_map<SDL_Scancode, std::vector<Binding<ContinuousCallback>>>
+        heldKeyBindings;
 };

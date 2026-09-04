@@ -11,11 +11,14 @@ add_executable(main
     base/sprites.hpp
     base/timer.cpp
     base/object_base.cpp
+    base/resource_manager.cpp
+    base/input_manager.cpp
     objects/ball.cpp
     objects/button.cpp
     objects/frame_label.cpp
     objects/arrow.cpp
-    objects/label.cpp)
+    objects/label.cpp
+    menu/settings_menu.cpp)
 
 
 target_include_directories(main PRIVATE 

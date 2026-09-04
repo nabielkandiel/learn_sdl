@@ -28,7 +28,8 @@ bool Texture::loadFromFile(const std::string &path, SDL_Renderer *sdl_renderer)
     }
 
     if (color_key.has_value()) {
-        auto surface_rgb = SDL_MapSurfaceRGB(loaded_surface, color_key->r, color_key->g, color_key->b);
+        auto surface_rgb =
+            SDL_MapSurfaceRGB(loaded_surface, color_key->r, color_key->g, color_key->b);
         if (!SDL_SetSurfaceColorKey(loaded_surface, true, surface_rgb)) {
             SDL_Log("Unable to color key - SDL error: %s\n", SDL_GetError());
             return false;
@@ -48,8 +49,8 @@ bool Texture::loadFromFile(const std::string &path, SDL_Renderer *sdl_renderer)
     return sdl_texture != nullptr;
 }
 
-bool Texture::loadFromRenderedText(const std::string &textureText, SDL_Color textColor, TTF_Font *font,
-                                   SDL_Renderer *sdl_renderer)
+bool Texture::loadFromRenderedText(const std::string &textureText, SDL_Color textColor,
+                                   TTF_Font *font, SDL_Renderer *sdl_renderer)
 {
     destroy();
     SDL_Surface *loaded_surface = TTF_RenderText_Blended(font, textureText.c_str(), 0, textColor);
@@ -96,9 +97,9 @@ void Texture::render(SDL_FPoint dst_cords, SDL_Renderer *sdl_renderer, const SDL
     SDL_RenderTexture(sdl_renderer, sdl_texture, src_rect, &dst_rect);
 }
 
-void Texture::renderWithTransform(SDL_FPoint dst_cords, SDL_Renderer *sdl_renderer, const SDL_FRect *src_rect,
-                                  const SDL_FPoint *dst_dims, double degrees, SDL_FPoint *center,
-                                  SDL_FlipMode flip_mode)
+void Texture::renderWithTransform(SDL_FPoint dst_cords, SDL_Renderer *sdl_renderer,
+                                  const SDL_FRect *src_rect, const SDL_FPoint *dst_dims,
+                                  double degrees, SDL_FPoint *center, SDL_FlipMode flip_mode)
 {
     auto dst_w = static_cast<float>(m_width);
     auto dst_h = static_cast<float>(m_height);
@@ -110,5 +111,6 @@ void Texture::renderWithTransform(SDL_FPoint dst_cords, SDL_Renderer *sdl_render
         dst_h = src_rect->h;
     }
     SDL_FRect dst_rect{.x = dst_cords.x, .y = dst_cords.y, .w = dst_w, .h = dst_h};
-    SDL_RenderTextureRotated(sdl_renderer, sdl_texture, src_rect, &dst_rect, degrees, center, flip_mode);
+    SDL_RenderTextureRotated(sdl_renderer, sdl_texture, src_rect, &dst_rect, degrees, center,
+                             flip_mode);
 }

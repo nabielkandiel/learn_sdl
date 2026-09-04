@@ -14,6 +14,25 @@ struct Settings
 
     bool enableVsync();
     bool disableVsync();
+    bool toggleVsync();
+
+    void setFpsLimit(uint32_t fps)
+    {
+        fpsCap = fps;
+        if (fps != 0U) {
+            nsPerFrame = 1'000'000'000 / fps;
+        }
+    }
+
+    [[nodiscard]] uint32_t fpsLimit() const
+    {
+        return fpsCap;
+    }
+
+    [[nodiscard]] uint64_t frameTimeNS() const
+    {
+        return nsPerFrame;
+    }
 
     [[nodiscard]] bool vsyncEnabled() const
     {
@@ -27,6 +46,7 @@ struct Settings
 
   private:
     bool vSyncEnabled{false};
-    bool fpsCapEnabled{false};
+    uint32_t fpsCap{0};
+    uint64_t nsPerFrame{0};
     SDL_Renderer *renderer{nullptr};
 };

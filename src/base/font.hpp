@@ -7,9 +7,9 @@
 class Font
 {
   public:
-    Font(const std::string &path, float fontSize)
+    Font(std::string_view path, float fontSize)
     {
-        std::string font_path = std::string(FONT_PATH) + path;
+        std::string font_path = std::string(FONT_PATH) + std::string(path);
         m_font = TTF_OpenFont(font_path.c_str(), fontSize);
     }
 

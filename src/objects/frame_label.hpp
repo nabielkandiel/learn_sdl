@@ -24,7 +24,8 @@ class FrameLabel : public ObjectBase
     FrameLabel &operator=(const FrameLabel &) = delete;
     FrameLabel &operator=(FrameLabel &&) noexcept = delete;
 
-    FrameLabel(GameContext &context, Font &font) : FrameLabel(context, font, {.x = 10.F, .y = 10.F}) {};
+    FrameLabel(GameContext &context, Font &font)
+        : FrameLabel(context, font, {.x = 10.F, .y = 10.F}) {};
     FrameLabel(GameContext &context, Font &font, SDL_FPoint pos);
     ~FrameLabel() override;
 

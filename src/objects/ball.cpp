@@ -1,23 +1,34 @@
 #include "ball.hpp"
 
+#include "common/CommonEnums.hpp"
+
 Ball::Ball(GameContext &context, SDL_FPoint bounds)
-    : ObjectBase(context), sprite(context.getTexture(GameContext::TEXTURES::BALL),
-                                  {ballDir::LEFT, ballDir::UP, ballDir::DOWN, ballDir::RIGHT}),
+    : ObjectBase(context),
+      sprite(context.getResourceManager().getTexture(Textures::BALL),
+             {ballDir::LEFT, ballDir::UP, ballDir::DOWN, ballDir::RIGHT}),
       maxBounds(bounds)
 {
     makeCenter();
     setupSprite(32.0F, 32.0F, {.rows = 2, .cols = 2});
 
     auto &input_manager = context.getInputManager();
-    input_manager.bindKeyDown(this, SDLK_UP, [this]() { setDirection(ballDir::UP); });
-    input_manager.bindKeyDown(this, SDLK_DOWN, [this]() { setDirection(ballDir::DOWN); });
-    input_manager.bindKeyDown(this, SDLK_LEFT, [this]() { setDirection(ballDir::LEFT); });
-    input_manager.bindKeyDown(this, SDLK_RIGHT, [this]() { setDirection(ballDir::RIGHT); });
+    input_manager.bindKeyDown(this, SDLK_UP, InputState::PLAYING,
+                              [this]() { setDirection(ballDir::UP); });
+    input_manager.bindKeyDown(this, SDLK_DOWN, InputState::PLAYING,
+                              [this]() { setDirection(ballDir::DOWN); });
+    input_manager.bindKeyDown(this, SDLK_LEFT, InputState::PLAYING,
+                              [this]() { setDirection(ballDir::LEFT); });
+    input_manager.bindKeyDown(this, SDLK_RIGHT, InputState::PLAYING,
+                              [this]() { setDirection(ballDir::RIGHT); });
 
-    input_manager.bindHeldKey(this, SDL_SCANCODE_UP, [this](float delta_t) { tryUp(delta_t); });
-    input_manager.bindHeldKey(this, SDL_SCANCODE_DOWN, [this](float delta_t) { tryDown(delta_t); });
-    input_manager.bindHeldKey(this, SDL_SCANCODE_LEFT, [this](float delta_t) { tryLeft(delta_t); });
-    input_manager.bindHeldKey(this, SDL_SCANCODE_RIGHT, [this](float delta_t) { tryRight(delta_t); });
+    input_manager.bindHeldKey(this, SDL_SCANCODE_UP, InputState::PLAYING,
+                              [this](float delta_t) { tryUp(delta_t); });
+    input_manager.bindHeldKey(this, SDL_SCANCODE_DOWN, InputState::PLAYING,
+                              [this](float delta_t) { tryDown(delta_t); });
+    input_manager.bindHeldKey(this, SDL_SCANCODE_LEFT, InputState::PLAYING,
+                              [this](float delta_t) { tryLeft(delta_t); });
+    input_manager.bindHeldKey(this, SDL_SCANCODE_RIGHT, InputState::PLAYING,
+                              [this](float delta_t) { tryRight(delta_t); });
 }
 
 Ball::~Ball()

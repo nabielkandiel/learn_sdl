@@ -33,3 +33,11 @@ bool Settings::disableVsync()
     SDL_Log("Disable vsync \n");
     return true;
 }
+
+bool Settings::toggleVsync()
+{
+    if (vSyncEnabled) {
+        return disableVsync();
+    }
+    return enableVsync();
+}

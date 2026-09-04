@@ -1,8 +1,10 @@
 #include "game_context.hpp"
 
-GameContext::GameContext(Size2D screen) : width(screen.width), height(screen.height)
+GameContext::GameContext(Size2D screen)
+    : width(screen.width), height(screen.height)
 {
     init();
+    resourceManager.loadTextures(renderer);
 }
 
 bool GameContext::init()
@@ -12,8 +14,10 @@ bool GameContext::init()
         return false;
     }
 
-    if (!SDL_CreateWindowAndRenderer("Nasty Tetris", width, height, 0, &window, &renderer)) {
-        SDL_Log("Create Window and Renderer failed - SDL error: %s\n", SDL_GetError());
+    if (!SDL_CreateWindowAndRenderer("Nasty Tetris", width, height, 0, &window,
+                                     &renderer)) {
+        SDL_Log("Create Window and Renderer failed - SDL error: %s\n",
+                SDL_GetError());
         return false;
     }
 
@@ -23,15 +27,22 @@ bool GameContext::init()
     }
 
     settings.setRenderer(renderer);
-
-    loadTextures();
+    inputManager.bindKeyDown(this, SDLK_ESCAPE, InputState::GLOBAL, [this]() {
+        switch (state) {
+        case State::PLAYING:
+            setState(State::PAUSED);
+            break;
+        case State::PAUSED:
+            setState(State::PLAYING);
+            break;
+        }
+    });
 
     return true;
 }
 
 void GameContext::close()
 {
-    destroyTextures();
     SDL_DestroyWindow(window);
     window = nullptr;
     SDL_DestroyRenderer(renderer);
@@ -40,32 +51,57 @@ void GameContext::close()
     SDL_Quit();
 }
 
-void GameContext::loadTextures()
+[[nodiscard]] int GameContext::getScreenWidth() const
 {
-    {
-        auto &texture = texture_map[TEXTURES::BALL];
-        texture.setColorKey(SDL_Color{.r = 0, .g = 180, .b = 180, .a = 0});
-        if (!loadAsset(texture, renderer, "balls.png")) {
-            SDL_Log("failed to load balls.png\n");
-        }
-    }
-    {
-        auto &texture = texture_map[TEXTURES::ARROW];
-        if (!loadAsset(texture, renderer, "arrow.png")) {
-            SDL_Log("failed to load arrow.png\n");
-        }
-    }
-    {
-        auto &texture = texture_map[TEXTURES::RESET_BUTTON];
-        if (!loadAsset(texture, renderer, "reset_bttn.png")) {
-            SDL_Log("failed to load reset_bttn.png \n");
-        }
-    }
+    return width;
 }
 
-void GameContext::destroyTextures()
+[[nodiscard]] int GameContext::getScreenHeight() const
 {
-    texture_map[TEXTURES::BALL].destroy();
-    texture_map[TEXTURES::ARROW].destroy();
-    texture_map[TEXTURES::RESET_BUTTON].destroy();
+    return height;
+}
+
+SDL_Renderer *GameContext::getRenderer()
+{
+    return renderer;
+}
+
+InputManager &GameContext::getInputManager()
+{
+    return inputManager;
+}
+
+EntityManager &GameContext::getEntityManager()
+{
+    return entityManager;
+}
+
+ResourceManager &GameContext::getResourceManager()
+{
+    return resourceManager;
+}
+
+Settings &GameContext::getSettings()
+{
+    return settings;
+}
+
+State GameContext::getState() const
+{
+    return state;
+}
+
+void GameContext::setState(State new_state)
+{
+    state = new_state;
+
+    switch (state) {
+
+    case State::PLAYING:
+        inputManager.setInputState(InputState::PLAYING);
+        break;
+    case State::PAUSED:
+        inputManager.setInputState(InputState::PAUSED);
+        break;
+    }
 }

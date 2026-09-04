@@ -1,13 +1,18 @@
 #include "arrow.hpp"
 #include <cmath>
 
+#include "common/CommonEnums.hpp"
+
 Arrow::Arrow(GameContext &context, std::optional<SDL_FPoint> pos, Ball &ball)
-    : ObjectBase(context), ball(ball), texture(context.getTexture(GameContext::TEXTURES::ARROW))
+    : ObjectBase(context), ball(ball),
+      texture(context.getResourceManager().getTexture(Textures::ARROW))
 {
     if (pos) {
         position = pos.value();
     } else {
-        position = {.x = 0.0F, .y = static_cast<float>(context.getScreenHeight() - texture.getHeight())};
+        position = {.x = 0.0F,
+                    .y = static_cast<float>(context.getScreenHeight() -
+                                            texture.getHeight())};
     }
 
     center.x = position.x + (static_cast<float>(texture.getWidth()) / 2.0F);
@@ -24,5 +29,6 @@ void Arrow::update(float /*unused*/)
 
 void Arrow::render(SDL_Renderer *renderer)
 {
-    texture.renderWithTransform(position, renderer, nullptr, nullptr, degrees, nullptr, SDL_FLIP_NONE);
+    texture.renderWithTransform(position, renderer, nullptr, nullptr, degrees,
+                                nullptr, SDL_FLIP_NONE);
 }

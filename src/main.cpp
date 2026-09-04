@@ -8,11 +8,16 @@
 #include "base/font.hpp"
 #include "base/game_context.hpp"
 #include "base/settings.hpp"
+
 #include "objects/arrow.hpp"
 #include "objects/ball.hpp"
 #include "objects/button.hpp"
 #include "objects/frame_label.hpp"
 #include "objects/label.hpp"
+
+#include "menu/settings_menu.hpp"
+
+#include "common/CommonEnums.hpp"
 
 int main()
 {
@@ -22,15 +27,19 @@ int main()
     GameContext game({.width = k_screen_width, .height = k_screen_height});
     auto &input_manager = game.getInputManager();
     auto &entity_manager = game.getEntityManager();
+    auto &settings = game.getSettings();
+    auto &resource_manager = game.getResourceManager();
+    std::unique_ptr<SettingsMenu> settings_menu = nullptr;
 
-    if (game.getSettings().enableVsync()) {
+    if (settings.enableVsync()) {
         SDL_Log("VSYNC ENABLED\n");
     }
 
-    SDL_Log("Starting with dimension %u x %u\n", k_screen_width, k_screen_height);
+    SDL_Log("Starting with dimension %u x %u\n", k_screen_width,
+            k_screen_height);
 
-    Font main_font("Montserrat/Montserrat-VariableFont_wght.ttf", 60);
-    Font small_font("Montserrat/Montserrat-VariableFont_wght.ttf", 20);
+    Font main_font(resource_manager.getFontPath(Fonts::MONTSERRAT), 60);
+    Font small_font(resource_manager.getFontPath(Fonts::MONTSERRAT), 20);
 
     FrameLabel frame_label(game, small_font, {.x = 0, .y = 80});
 
@@ -54,7 +63,8 @@ int main()
     uint64_t last = SDL_GetTicksNS();
     while (!quit) {
         Uint64 now = SDL_GetTicksNS();
-        float dt_c = static_cast<float>(now - last) / 1'000'000'000.0F; // ns → seconds
+        float dt_c =
+            static_cast<float>(now - last) / 1'000'000'000.0F; // ns → seconds
         last = now;
         // handle input
         while (SDL_PollEvent(&event)) {
@@ -64,18 +74,44 @@ int main()
                 input_manager.handleEvent(event);
             }
         }
-        input_manager.update(dt_c);
-        entity_manager.updateEntites(dt_c);
+
+        switch (game.getState()) {
+
+        case State::PLAYING:
+            input_manager.update(dt_c);
+            entity_manager.updateEntites(dt_c);
+            if (settings_menu) {
+                settings_menu.reset();
+            }
+            break;
+        case State::PAUSED:
+            if (settings_menu == nullptr) {
+                settings_menu = std::make_unique<SettingsMenu>(game);
+            }
+            break;
+        }
 
         // set background to white
-        SDL_SetRenderDrawColor(game.getRenderer(), bg_color.r, bg_color.g, bg_color.b, 0xFF);
+        SDL_SetRenderDrawColor(game.getRenderer(), bg_color.r, bg_color.g,
+                               bg_color.b, 0xFF);
         SDL_RenderClear(game.getRenderer());
 
         // render image to screen
         entity_manager.renderEntities(game.getRenderer());
+        if (settings_menu) {
+            settings_menu->render(game.getRenderer());
+        }
 
         // update screen
         SDL_RenderPresent(game.getRenderer());
+
+        // limit framerate
+        uint64_t render_time_ns = SDL_GetTicksNS() - now;
+        if (settings.fpsLimit() != 0 &&
+            (render_time_ns < settings.frameTimeNS())) {
+            uint64_t sleep_time = settings.frameTimeNS() - render_time_ns;
+            SDL_DelayNS(sleep_time);
+        }
     }
 
     return 0;

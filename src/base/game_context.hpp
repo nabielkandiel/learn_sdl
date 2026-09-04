@@ -8,21 +8,17 @@
 #include <SDL3/SDL_video.h>
 #include <SDL3_ttf/SDL_ttf.h>
 
+#include "common/CommonEnums.hpp"
+
 #include "entity_manager.hpp"
 #include "input_manager.hpp"
+#include "resource_manager.hpp"
 #include "settings.hpp"
 #include "utility.h"
 
 class GameContext
 {
   public:
-    enum class TEXTURES : uint8_t
-    {
-        BALL = 0,
-        ARROW = 1,
-        RESET_BUTTON = 2,
-    };
-
     GameContext(const GameContext &) = delete;
     GameContext(GameContext &&) = delete;
     GameContext &operator=(const GameContext &) = delete;
@@ -35,54 +31,28 @@ class GameContext
         close();
     }
 
-    [[nodiscard]] int getScreenWidth() const
-    {
-        return width;
-    }
+    State getState() const;
+    void setState(State new_state);
 
-    [[nodiscard]] int getScreenHeight() const
-    {
-        return height;
-    }
-
-    SDL_Renderer *getRenderer()
-    {
-        return renderer;
-    }
-
-    InputManager &getInputManager()
-    {
-        return inputManager;
-    }
-
-    EntityManager &getEntityManager()
-    {
-        return entityManager;
-    }
-
-    Settings &getSettings()
-    {
-        return settings;
-    }
-
-    Texture &getTexture(TEXTURES text)
-    {
-        return texture_map[text];
-    }
-
+    int getScreenWidth() const;
+    int getScreenHeight() const;
+    SDL_Renderer *getRenderer();
+    InputManager &getInputManager();
+    EntityManager &getEntityManager();
+    ResourceManager &getResourceManager();
+    Settings &getSettings();
     bool init();
     void close();
 
   private:
-    void loadTextures();
-    void destroyTextures();
-
     SDL_Window *window{nullptr};
     SDL_Renderer *renderer{nullptr};
     InputManager inputManager;
     EntityManager entityManager;
+    ResourceManager resourceManager;
     Settings settings;
-    std::unordered_map<TEXTURES, Texture> texture_map;
+
+    State state{State::PLAYING};
 
     int width;
     int height;
