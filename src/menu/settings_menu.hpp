@@ -1,14 +1,14 @@
 #pragma once
 
-#include <functional>
 #include <memory>
-#include <string>
+#include <vector>
 
 #include "base/font.hpp"
 #include "base/game_context.hpp"
 #include "base/input_manager.hpp"
 #include "base/settings.hpp"
 #include "base/text.hpp"
+#include "objects/button.hpp"
 
 class SettingsMenu
 {
@@ -23,19 +23,18 @@ class SettingsMenu
     void render(SDL_Renderer *renderer);
 
   private:
-    struct MenuOption
-    {
-        std::string label;
-        std::unique_ptr<Text> text;
-        std::function<void()> onActivate;
-    };
-
     GameContext *game;
     InputManager *input_manager;
     Settings *settings;
-    std::vector<MenuOption> options;
     Font font;
+    std::unique_ptr<Text> fps_label;
+    // Button is non-copyable and non-movable — must be held by pointer
+    std::vector<std::unique_ptr<Button>> buttons;
 
-    void refreshLabels();
+    static constexpr float START_Y = 150.F;
+    static constexpr float ROW_H = 60.F;
+
+    void createButtons();
     void bindControls();
+    void updateFpsLabel();
 };

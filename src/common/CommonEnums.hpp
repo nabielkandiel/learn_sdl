@@ -26,3 +26,10 @@ enum class InputState : uint8_t
     PLAYING = 1,
     PAUSED = 2,
 };
+
+enum class ButtonSprite : uint8_t
+{
+    NORMAL = 0,
+    ACTIVE = 1,
+    COUNT = 2,
+};

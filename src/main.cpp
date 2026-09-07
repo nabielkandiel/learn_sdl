@@ -11,9 +11,9 @@
 
 #include "objects/arrow.hpp"
 #include "objects/ball.hpp"
-#include "objects/button.hpp"
 #include "objects/frame_label.hpp"
 #include "objects/label.hpp"
+#include "objects/reset_button.hpp"
 
 #include "menu/settings_menu.hpp"
 
@@ -46,7 +46,7 @@ int main()
     // character sprite
     Ball ball(game, {.x = k_screen_width, .y = k_screen_height});
 
-    Button reset_btn(game);
+    ResetButton reset_btn(game);
     reset_btn.setOnPress([&ball]() { ball.makeCenter(); });
 
     Arrow arrow{game, std::nullopt, ball};
@@ -79,7 +79,10 @@ int main()
 
         case State::PLAYING:
             input_manager.update(dt_c);
+            // apply all forces if applicable
             entity_manager.updateEntites(dt_c);
+            // check for collisions
+            // process collisions
             if (settings_menu) {
                 settings_menu.reset();
             }

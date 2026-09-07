@@ -15,6 +15,7 @@ add_executable(main
     base/input_manager.cpp
     objects/ball.cpp
     objects/button.cpp
+    objects/reset_button.cpp
     objects/frame_label.cpp
     objects/arrow.cpp
     objects/label.cpp
