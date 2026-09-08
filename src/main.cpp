@@ -13,7 +13,6 @@
 #include "objects/ball.hpp"
 #include "objects/frame_label.hpp"
 #include "objects/label.hpp"
-#include "objects/reset_button.hpp"
 
 #include "menu/settings_menu.hpp"
 
@@ -46,7 +45,17 @@ int main()
     // character sprite
     Ball ball(game, {.x = k_screen_width, .y = k_screen_height});
 
-    ResetButton reset_btn(game);
+    auto &reset_texture = resource_manager.getTexture(Textures::RESET_BUTTON);
+    // need to divide width by half again since texture has two buttons side by
+    // side
+    auto reset_w = static_cast<float>(reset_texture.getWidth()) / 2.F;
+    auto reset_h = static_cast<float>(reset_texture.getHeight());
+    auto reset_x = (static_cast<float>(game.getScreenWidth()) - reset_w);
+    auto reset_y = (static_cast<float>(game.getScreenHeight()) - reset_h);
+    SDL_FRect reset_btn_bounds{
+        .x = reset_x, .y = reset_y, .w = reset_w, .h = reset_h};
+    Button reset_btn(game, reset_btn_bounds, Button::ButtonKind::PUSH,
+                     reset_texture, 64, 64);
     reset_btn.setOnPress([&ball]() { ball.makeCenter(); });
 
     Arrow arrow{game, std::nullopt, ball};
