@@ -28,6 +28,7 @@ int main()
     auto &entity_manager = game.getEntityManager();
     auto &settings = game.getSettings();
     auto &resource_manager = game.getResourceManager();
+    auto &collision_manager = game.getCollisionManager();
     std::unique_ptr<SettingsMenu> settings_menu = nullptr;
 
     if (settings.enableVsync()) {
@@ -43,7 +44,8 @@ int main()
     FrameLabel frame_label(game, small_font, {.x = 0, .y = 80});
 
     // character sprite
-    Ball ball(game, {.x = k_screen_width, .y = k_screen_height});
+    Ball ball(game, {.x = k_screen_width, .y = k_screen_height}, false);
+    Ball ball_2(game, {.x = k_screen_width, .y = k_screen_height}, true);
 
     auto &reset_texture = resource_manager.getTexture(Textures::RESET_BUTTON);
     // need to divide width by half again since texture has two buttons side by
@@ -91,6 +93,7 @@ int main()
             // apply all forces if applicable
             entity_manager.updateEntites(dt_c);
             // check for collisions
+            collision_manager.step();
             // process collisions
             if (settings_menu) {
                 settings_menu.reset();

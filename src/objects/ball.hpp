@@ -2,13 +2,14 @@
 
 #include <SDL3/SDL.h>
 
+#include "base/collidable_base.hpp"
 #include "base/game_context.hpp"
 #include "base/object_base.hpp"
 #include "base/sprites.hpp"
 
 #include <algorithm>
 
-class Ball : public ObjectBase
+class Ball : public ObjectBase, public CollidableBase
 {
   private:
     enum class ballDir : uint8_t
@@ -30,9 +31,12 @@ class Ball : public ObjectBase
     bool x_mov{false};
     bool y_mov{false};
 
-    static constexpr float ACCEL = 2500.0F;    // pixels/sec² — how fast it speeds up while held
-    static constexpr float FRICTION = 4000.0F; // pixels/sec² — how fast it slows when released
-    static constexpr float MAX_SPEED = 500.0F; // pixels/sec — cap so it doesn't accelerate forever
+    static constexpr float ACCEL =
+        2500.0F; // pixels/sec² — how fast it speeds up while held
+    static constexpr float FRICTION =
+        4000.0F; // pixels/sec² — how fast it slows when released
+    static constexpr float MAX_SPEED =
+        500.0F; // pixels/sec — cap so it doesn't accelerate forever
 
     void setupSprite(float spr_w, float spr_h, GridDimensions dims)
     {
@@ -46,7 +50,7 @@ class Ball : public ObjectBase
     Ball &operator=(const Ball &) = delete;
     Ball &operator=(Ball &&) = delete;
 
-    Ball(GameContext &context, SDL_FPoint bounds);
+    Ball(GameContext &context, SDL_FPoint bounds, bool use_arrow);
     ~Ball() override;
 
     void makeCenter()
@@ -92,6 +96,37 @@ class Ball : public ObjectBase
     [[nodiscard]] SDL_FPoint getPosition() const
     {
         return position;
+    }
+
+    [[nodiscard]] Collider getCollider() const override
+    {
+        return {
+            .type = ShapeType::CIRCLE,
+            .circle = {.center_pos = position,
+                       .radius = sprite.getActiveRect().w / 2.F},
+        };
+    }
+
+    [[nodiscard]] float getInverseMass() const override
+    {
+        return 1.F;
+    }
+
+    [[nodiscard]] SDL_FPoint getVelocity() const override
+    {
+        return {.x = x_vel, .y = y_vel};
+    }
+
+    void setVelocity(SDL_FPoint new_vel) override
+    {
+        x_vel = new_vel.x;
+        y_vel = new_vel.y;
+    }
+
+    void translate(SDL_FPoint delta) override
+    {
+        position.x = std::clamp(position.x + delta.x, 0.0F, maxBounds.x);
+        position.y = std::clamp(position.y + delta.y, 0.0F, maxBounds.y);
     }
 
     void update(float delat_t) override;

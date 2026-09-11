@@ -81,6 +81,11 @@ ResourceManager &GameContext::getResourceManager()
     return resourceManager;
 }
 
+CollisionManager &GameContext::getCollisionManager()
+{
+    return collisionManager;
+}
+
 Settings &GameContext::getSettings()
 {
     return settings;

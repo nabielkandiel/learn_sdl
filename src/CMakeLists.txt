@@ -13,6 +13,8 @@ add_executable(main
     base/object_base.cpp
     base/resource_manager.cpp
     base/input_manager.cpp
+    base/collidable_base.cpp
+    base/collision_manager.cpp
     objects/ball.cpp
     objects/button.cpp
     objects/frame_label.cpp

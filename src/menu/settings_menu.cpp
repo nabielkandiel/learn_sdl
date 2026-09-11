@@ -53,7 +53,6 @@ void SettingsMenu::createButtons()
         if (new_state != settings->vsyncEnabled()) {
             settings->toggleVsync();
         }
-        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-avoid-unchecked-container-access)
         buttons[0]->setText(std::string("VSync: ") +
                             (settings->vsyncEnabled() ? "ON" : "OFF"));
     });

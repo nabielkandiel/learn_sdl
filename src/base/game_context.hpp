@@ -10,6 +10,7 @@
 
 #include "common/CommonEnums.hpp"
 
+#include "collision_manager.hpp"
 #include "entity_manager.hpp"
 #include "input_manager.hpp"
 #include "resource_manager.hpp"
@@ -40,6 +41,7 @@ class GameContext
     InputManager &getInputManager();
     EntityManager &getEntityManager();
     ResourceManager &getResourceManager();
+    CollisionManager &getCollisionManager();
     Settings &getSettings();
     bool init();
     void close();
@@ -50,6 +52,7 @@ class GameContext
     InputManager inputManager;
     EntityManager entityManager;
     ResourceManager resourceManager;
+    CollisionManager collisionManager;
     Settings settings;
 
     State state{State::PLAYING};

@@ -33,3 +33,9 @@ enum class ButtonSprite : uint8_t
     ACTIVE = 1,
     COUNT = 2,
 };
+
+enum class ShapeType : uint8_t
+{
+    CIRCLE = 0,
+    AABB = 1,
+};
