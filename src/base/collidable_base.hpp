@@ -33,9 +33,9 @@ class CollidableBase
     CollidableBase(CollisionManager &manager);
     virtual ~CollidableBase();
 
-    CollidableBase(const CollidableBase &) = default;
+    CollidableBase(const CollidableBase &) = delete;
     CollidableBase(CollidableBase &&) = delete;
-    CollidableBase &operator=(const CollidableBase &) = default;
+    CollidableBase &operator=(const CollidableBase &) = delete;
     CollidableBase &operator=(CollidableBase &&) = delete;
 
     [[nodiscard]] virtual Collider getCollider() const = 0;

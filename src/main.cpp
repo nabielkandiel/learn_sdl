@@ -92,9 +92,8 @@ int main()
             input_manager.update(dt_c);
             // apply all forces if applicable
             entity_manager.updateEntites(dt_c);
-            // check for collisions
+            // check and process collisions
             collision_manager.step();
-            // process collisions
             if (settings_menu) {
                 settings_menu.reset();
             }

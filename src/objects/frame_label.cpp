@@ -19,11 +19,11 @@ void FrameLabel::update(float delta_t)
     if (timeSinceUpdate > 1) {
         fps = static_cast<double>(frameCount) /
               static_cast<double>(timeSinceUpdate);
+        double avg_frame_ms = 1'000.F / fps;
         timeSinceUpdate = 0;
         frameCount = 0;
         std::string msg =
-            "MS since start: " +
-            std::to_string(timer.getTicksNS() / 1'000'000) + "\n" +
+            "frame time (ms): " + std::to_string(avg_frame_ms) + "\n" +
             "Vsync: " + (settings->vsyncEnabled() ? "Yes" : "No") + "\n" +
             "FPS: " + std::to_string(fps);
         text.setText(msg);
